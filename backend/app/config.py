@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     # API (SiliconFlow / OpenAI compatible)
     LLM_API_KEY: str = ""
     LLM_API_BASE: str = "https://api.siliconflow.cn/v1"
-    LLM_MODEL_NAME: str = "Qwen/Qwen2.5-7B-Instruct"
+    LLM_MODEL_NAME: str = "deepseek-ai/DeepSeek-V3"
     EMBEDDING_MODEL_NAME: str = "BAAI/bge-m3"
     EMBEDDING_DIMENSIONS: int = 1024
 
@@ -47,7 +47,7 @@ class Settings(BaseSettings):
     # LightRAG 配置
     LIGHTRAG_LLM_BINDING: str = "openai"  # openai, ollama, azure_openai, gemini
     LIGHTRAG_LLM_HOST: str = ""  # 留空使用默认，或自定义如 http://localhost:11434
-    LIGHTRAG_LLM_MODEL: str = "qwen-plus"
+    LIGHTRAG_LLM_MODEL: str = "deepseek-ai/DeepSeek-V3"
     LIGHTRAG_EMBEDDING_BINDING: str = "openai"  # openai, ollama
     LIGHTRAG_EMBEDDING_HOST: str = ""
     LIGHTRAG_EMBEDDING_MODEL: str = "text-embedding-v3"

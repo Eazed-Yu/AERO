@@ -52,8 +52,6 @@ async def start_lightrag_server():
         _lightrag_process = subprocess.Popen(
             [sys.executable, "-m", "lightrag.api.lightrag_server"],
             env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
         )
 
         logger.info(f"LightRAG server started (PID: {_lightrag_process.pid})")
