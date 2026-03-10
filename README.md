@@ -107,10 +107,48 @@ uv run uvicorn app.main:app --reload --port 8000
 
 # 终端 2：前端
 cd frontend
-npm run dev
+**npm run dev**
+```
+
+# 生成模拟数据
+```
+uv run python -m scripts.generate_data --days 7 --anomaly-rate 0.08 --seed 123
 ```
 
 访问 http://localhost:3000
+
+## 导入导出文件格式（当前实现）
+
+### 导入
+
+- 接口：`POST /api/v1/import/upload`
+- 支持文件：`.csv`、`.json`
+- 说明：该接口只导入能耗记录（`EnergyRecordCreate`）
+
+CSV 表头（至少需要前两列）：
+
+```csv
+building_id,timestamp,electricity_kwh,water_m3,gas_m3,hvac_kwh,hvac_supply_temp,hvac_return_temp,hvac_flow_rate,outdoor_temp,outdoor_humidity,occupancy_density
+```
+
+JSON 文件格式（数组）：
+
+```json
+[
+	{
+		"building_id": "BLD-001",
+		"timestamp": "2026-03-09T08:00:00",
+		"electricity_kwh": 120.5
+	}
+]
+```
+
+### 导出
+
+- CSV：`POST /api/v1/export/csv`
+- Excel：`POST /api/v1/export/excel`
+- 参数：`building_id`、`start_time`、`end_time`
+- 导出字段：`building_id,timestamp,electricity_kwh,water_m3,gas_m3,hvac_kwh,hvac_supply_temp,hvac_return_temp,outdoor_temp,outdoor_humidity`
 
 ## API 概览
 

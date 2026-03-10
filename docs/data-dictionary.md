@@ -170,16 +170,18 @@
 
 ## 6. 标准数据导入格式
 
-系统接受以下 JSON 格式进行能耗记录的批量导入。每次请求的顶层结构为一个对象，包含 `building_id` 和 `records` 数组。
+当前后端实现支持两种能耗导入方式。
 
-### 请求结构
+### 6.1 JSON Body 导入（`POST /api/v1/import/energy`）
+
+请求体顶层字段为 `records`，每条记录都必须自带 `building_id`。
 
 ```json
 {
-  "building_id": "BLD-001",
   "records": [
     {
-      "timestamp": "2026-03-09T08:00:00+08:00",
+      "building_id": "BLD-001",
+      "timestamp": "2026-03-09T08:00:00",
       "electricity_kwh": 120.5,
       "water_m3": 3.2,
       "gas_m3": 0.0,
@@ -190,46 +192,46 @@
       "outdoor_temp": 18.5,
       "outdoor_humidity": 65.0,
       "occupancy_density": 0.05
-    },
-    {
-      "timestamp": "2026-03-09T09:00:00+08:00",
-      "electricity_kwh": 135.2,
-      "water_m3": 3.5,
-      "gas_m3": 0.0,
-      "hvac_kwh": 52.3,
-      "hvac_supply_temp": 7.0,
-      "hvac_return_temp": 12.5,
-      "hvac_flow_rate": 55.0,
-      "outdoor_temp": 20.1,
-      "outdoor_humidity": 60.0,
-      "occupancy_density": 0.08
     }
-  ]
+  ],
+  "validate": true,
+  "on_conflict": "skip"
 }
 ```
 
-### 字段说明
+### 6.2 文件上传导入（`POST /api/v1/import/upload`）
+
+- 支持文件类型：`.csv`、`.json`
+- CSV 编码：`UTF-8`（接口兼容带 BOM 的 `UTF-8-SIG`）
+- CSV 首行必须是字段名，至少包含：`building_id`、`timestamp`
+- `.json` 文件应为对象数组，每个对象字段与 `EnergyRecordCreate` 一致
+
+CSV 示例（`energy_records.csv`）：
+
+```csv
+building_id,timestamp,electricity_kwh,water_m3,gas_m3,hvac_kwh,hvac_supply_temp,hvac_return_temp,hvac_flow_rate,outdoor_temp,outdoor_humidity,occupancy_density
+BLD-001,2026-03-09T08:00:00,120.5,3.2,0.0,45.0,7.0,12.0,50.0,18.5,65.0,0.05
+```
+
+### 6.3 字段说明（单条能耗记录）
 
 | 字段名 | 数据类型 | 是否必填 | 说明 |
 |---|---|---|---|
-| building_id | string | 是 | 建筑唯一业务编号，必须已存在于 buildings 表中 |
-| records | array | 是 | 能耗记录数组，至少包含一条记录 |
-| records[].timestamp | string (ISO 8601) | 是 | 数据采集时间，必须包含时区信息 |
-| records[].electricity_kwh | number | 否 | 电力消耗 (kWh)，缺省时不更新该指标 |
-| records[].water_m3 | number | 否 | 用水量 (m³)，缺省时不更新该指标 |
-| records[].gas_m3 | number | 否 | 燃气消耗 (m³)，缺省时不更新该指标 |
-| records[].hvac_kwh | number | 否 | 暖通空调能耗 (kWh)，缺省时不更新该指标 |
-| records[].hvac_supply_temp | number | 否 | 暖通空调供水温度 (°C) |
-| records[].hvac_return_temp | number | 否 | 暖通空调回水温度 (°C) |
-| records[].hvac_flow_rate | number | 否 | 暖通空调水流量 (m³/h) |
-| records[].outdoor_temp | number | 否 | 室外温度 (°C) |
-| records[].outdoor_humidity | number | 否 | 室外相对湿度 (%) |
-| records[].occupancy_density | number | 否 | 人员密度 (人/m²) |
+| building_id | string | 是 | 建筑业务编号 |
+| timestamp | string(datetime) | 是 | 采集时间，支持 ISO 8601 常见格式 |
+| electricity_kwh | number | 否 | 电力消耗 (kWh)，>= 0 |
+| water_m3 | number | 否 | 用水量 (m3)，>= 0 |
+| gas_m3 | number | 否 | 燃气消耗 (m3)，>= 0 |
+| hvac_kwh | number | 否 | 暖通空调能耗 (kWh)，>= 0 |
+| hvac_supply_temp | number | 否 | 暖通空调供水温度 (C) |
+| hvac_return_temp | number | 否 | 暖通空调回水温度 (C) |
+| hvac_flow_rate | number | 否 | 暖通空调水流量 (m3/h)，>= 0 |
+| outdoor_temp | number | 否 | 室外温度 (C) |
+| outdoor_humidity | number | 否 | 室外相对湿度 (%) |
+| occupancy_density | number | 否 | 人员密度，>= 0 |
 
-### 导入规则
+### 6.4 导入行为说明（与当前实现一致）
 
-- **building_id** 必须对应 `buildings` 表中已存在的记录，否则导入失败。
-- **timestamp** 必须符合 ISO 8601 格式，且必须携带时区偏移量（如 `+08:00`）或使用 UTC 标记 (`Z`)。
-- 所有数值类型字段不得为负数（带有 `CHECK >= 0` 约束的字段）。
-- 同一 `building_id` + `timestamp` 组合重复导入时，系统执行幂等覆盖（upsert）。
-- 单次导入的 `records` 数组大小建议不超过 **1000** 条，超出时请分批提交。
+- 校验通过后按行插入，返回 `ImportResult`。
+- `on_conflict` 参数已定义在请求模型中，但当前服务层尚未实现 `update/error` 的差异化冲突处理。
+- 上传接口仅解析能耗记录格式，设备/建筑 CSV 不能通过该接口导入。

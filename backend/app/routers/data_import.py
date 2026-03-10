@@ -28,7 +28,8 @@ async def upload_file(
     db: AsyncSession = Depends(get_db),
 ):
     content = await file.read()
-    text = content.decode("utf-8")
+    # utf-8-sig safely handles files with BOM in header.
+    text = content.decode("utf-8-sig")
 
     if file.filename and file.filename.endswith(".json"):
         raw_records = json.loads(text)
@@ -41,11 +42,41 @@ async def upload_file(
     else:
         raw_records = json.loads(text)
 
+    def _normalize_row(raw: dict) -> dict:
+        normalized = {}
+        for key, value in raw.items():
+            if key is None:
+                continue
+            cleaned_key = key.lstrip("\ufeff").strip()
+            normalized[cleaned_key] = value
+        return normalized
+
     records = []
     errors = []
+    required_fields = {"building_id", "timestamp"}
+
+    if raw_records:
+        first_row = _normalize_row(raw_records[0])
+        missing = required_fields - set(first_row.keys())
+        if missing:
+            return ImportResult(
+                total=len(raw_records),
+                inserted=0,
+                skipped=0,
+                errors=len(raw_records),
+                error_details=[
+                    (
+                        "CSV header does not match energy import format. "
+                        "Required columns include: building_id, timestamp. "
+                        "Please upload energy_records.csv for this endpoint."
+                    )
+                ],
+            )
+
     for i, raw in enumerate(raw_records):
         try:
-            records.append(EnergyRecordCreate(**raw))
+            normalized = _normalize_row(raw)
+            records.append(EnergyRecordCreate(**normalized))
         except Exception as e:
             errors.append(f"Row {i}: {str(e)}")
 

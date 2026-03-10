@@ -3,12 +3,12 @@
     <div class="surface" style="padding: 24px">
       <div class="section-title">上传能耗数据文件</div>
       <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px">
-        支持 CSV 文件，包含 building_id、timestamp、electricity_kwh 等字段。
+        支持 CSV/JSON 文件，包含 building_id、timestamp、electricity_kwh 等字段。
       </p>
       <n-upload
         action="/api/v1/import/upload"
         :max="5"
-        accept=".csv,.xlsx,.xls"
+        accept=".csv,.json"
         :on-finish="handleFinish"
         :on-error="handleError"
         :on-before-upload="handleBeforeUpload"

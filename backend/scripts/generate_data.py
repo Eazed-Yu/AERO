@@ -1,9 +1,10 @@
 """
-Generate realistic synthetic building energy data.
-Usage: uv run python -m scripts.generate_data
+Generate realistic synthetic building energy CSV files.
+Usage: uv run python -m scripts.generate_data --days 7 --anomaly-rate 0.04
 """
 
-import json
+import argparse
+import csv
 import math
 import random
 from datetime import datetime, timedelta
@@ -147,17 +148,31 @@ def _seasonal_temp(day_of_year: int) -> float:
     return 14 + 18 * math.sin(2 * math.pi * (day_of_year - 100) / 365)
 
 
+def _current_hour() -> datetime:
+    now = datetime.now()
+    return now.replace(minute=0, second=0, microsecond=0)
+
+
 def generate_data(
-    start_date: datetime = datetime(2025, 1, 1),
-    days: int = 90,
-    anomaly_rate: float = 0.025,
+    days: int = 7,
+    anomaly_rate: float = 0.05,
+    seed: int = 42,
 ):
-    random.seed(42)
-    np.random.seed(42)
+    random.seed(seed)
+    np.random.seed(seed)
+
+    if days <= 0:
+        raise ValueError("days must be greater than 0")
+    if not 0 <= anomaly_rate <= 1:
+        raise ValueError("anomaly_rate must be between 0 and 1")
+
+    end_hour = _current_hour()
+    start_hour = end_hour - timedelta(days=days)
 
     energy_records = []
     equipment_list = []
     equipment_status_records = []
+    anomaly_events = []
 
     # Generate equipment
     dev_counter = 0
@@ -177,96 +192,137 @@ def generate_data(
                 }
             )
 
-    # Generate hourly energy records
+    # Generate hourly energy records concentrated in the previous N days.
     for bld in BUILDINGS:
         btype = bld["building_type"]
         area = bld["area"]
         baseline = ELECTRICITY_BASELINES[btype] * (area / 1000)
 
-        for day in range(days):
-            dt = start_date + timedelta(days=day)
-            day_of_year = dt.timetuple().tm_yday
-            weekday = dt.weekday()
+        ts = start_hour
+        while ts <= end_hour:
+            day_of_year = ts.timetuple().tm_yday
+            weekday = ts.weekday()
+            hour = ts.hour
 
             outdoor_base = _seasonal_temp(day_of_year)
             wd_factor = _weekday_factor(weekday, btype)
+            hr_factor = _hour_factor(hour, btype)
 
-            for hour in range(24):
-                ts = dt.replace(hour=hour, minute=0, second=0, microsecond=0)
-                hr_factor = _hour_factor(hour, btype)
+            # Outdoor conditions
+            outdoor_temp = outdoor_base + 3 * math.sin(
+                2 * math.pi * (hour - 6) / 24
+            ) + np.random.normal(0, 1.5)
+            outdoor_humidity = max(
+                20,
+                min(95, 60 + 15 * math.sin(2 * math.pi * (hour - 3) / 24)
+                    + np.random.normal(0, 8)),
+            )
 
-                # Outdoor conditions
-                outdoor_temp = outdoor_base + 3 * math.sin(
-                    2 * math.pi * (hour - 6) / 24
-                ) + np.random.normal(0, 1.5)
-                outdoor_humidity = max(
-                    20,
-                    min(95, 60 + 15 * math.sin(2 * math.pi * (hour - 3) / 24)
-                        + np.random.normal(0, 8)),
+            # Electricity
+            noise = np.random.normal(1.0, 0.08)
+            electricity = baseline * hr_factor * wd_factor * noise
+
+            # HVAC depends on outdoor temp
+            temp_diff = abs(outdoor_temp - 22)
+            hvac_factor = max(0.1, min(1.5, temp_diff / 20))
+            hvac_kwh = electricity * 0.45 * hvac_factor * np.random.normal(1, 0.05)
+
+            # HVAC temps
+            if outdoor_temp > 22:  # Cooling mode
+                supply_temp = 7 + np.random.normal(0, 0.5)
+                return_temp = 12 + np.random.normal(0, 0.5)
+            else:  # Heating mode
+                supply_temp = 45 + np.random.normal(0, 1)
+                return_temp = 38 + np.random.normal(0, 1)
+
+            flow_rate = max(5, 30 + 20 * hvac_factor + np.random.normal(0, 3))
+
+            # Water
+            water = (area / 1000) * 0.3 * hr_factor * wd_factor * np.random.normal(1, 0.1)
+
+            # Occupancy
+            if btype in ("office", "school"):
+                occ = 5.0 * hr_factor * wd_factor + np.random.normal(0, 0.5)
+            elif btype == "hospital":
+                occ = 3.0 + np.random.normal(0, 0.3)
+            elif btype == "commercial":
+                occ = 8.0 * hr_factor * wd_factor + np.random.normal(0, 1)
+            else:
+                occ = 2.0 + np.random.normal(0, 0.3)
+            occ = max(0, occ)
+
+            # Inject obvious but DB-valid anomalies for testing.
+            is_anomaly = random.random() < anomaly_rate
+            if is_anomaly:
+                anomaly_choice = random.choice([
+                    "electricity_spike",
+                    "temperature_offset",
+                    "flow_loss",
+                ])
+                if anomaly_choice == "electricity_spike":
+                    electricity *= random.uniform(3.0, 6.0)
+                    metric_name = "electricity_kwh"
+                    metric_value = electricity
+                    threshold_value = baseline * 2.0
+                    description = "Electricity spike much higher than baseline."
+                elif anomaly_choice == "temperature_offset":
+                    # Cooling mode should have low supply temp; this introduces clear drift.
+                    supply_temp += random.uniform(10, 18)
+                    metric_name = "hvac_supply_temp"
+                    metric_value = supply_temp
+                    threshold_value = 18.0
+                    description = "HVAC supply temperature abnormally high."
+                else:
+                    flow_rate = max(0, flow_rate * random.uniform(0.03, 0.12))
+                    hvac_kwh *= random.uniform(1.4, 2.0)
+                    metric_name = "hvac_flow_rate"
+                    metric_value = flow_rate
+                    threshold_value = 5.0
+                    description = "HVAC flow rate collapse with elevated HVAC load."
+
+                severity = random.choice(["high", "critical"])
+                anomaly_events.append(
+                    {
+                        "building_id": bld["building_id"],
+                        "device_id": "",
+                        "timestamp": ts.isoformat(),
+                        "anomaly_type": anomaly_choice,
+                        "severity": severity,
+                        "metric_name": metric_name,
+                        "metric_value": round(float(metric_value), 3),
+                        "threshold_value": round(float(threshold_value), 3),
+                        "description": description,
+                        "resolved": False,
+                        "detection_method": "synthetic_rule",
+                    }
                 )
 
-                # Electricity
-                noise = np.random.normal(1.0, 0.08)
-                electricity = baseline * hr_factor * wd_factor * noise
+            record = {
+                "building_id": bld["building_id"],
+                "timestamp": ts.isoformat(),
+                "electricity_kwh": round(max(0, electricity), 2),
+                "water_m3": round(max(0, water), 3),
+                "gas_m3": round(max(0, (area / 1000) * 0.1 * hvac_factor * np.random.normal(1, 0.05)), 3),
+                "hvac_kwh": round(max(0, hvac_kwh), 2),
+                "hvac_supply_temp": round(supply_temp, 1),
+                "hvac_return_temp": round(return_temp, 1),
+                "hvac_flow_rate": round(max(0, flow_rate), 1),
+                "outdoor_temp": round(outdoor_temp, 1),
+                "outdoor_humidity": round(outdoor_humidity, 1),
+                "occupancy_density": round(occ, 1),
+            }
+            energy_records.append(record)
 
-                # HVAC depends on outdoor temp
-                temp_diff = abs(outdoor_temp - 22)
-                hvac_factor = max(0.1, min(1.5, temp_diff / 20))
-                hvac_kwh = electricity * 0.45 * hvac_factor * np.random.normal(1, 0.05)
-
-                # HVAC temps
-                if outdoor_temp > 22:  # Cooling mode
-                    supply_temp = 7 + np.random.normal(0, 0.5)
-                    return_temp = 12 + np.random.normal(0, 0.5)
-                else:  # Heating mode
-                    supply_temp = 45 + np.random.normal(0, 1)
-                    return_temp = 38 + np.random.normal(0, 1)
-
-                flow_rate = max(5, 30 + 20 * hvac_factor + np.random.normal(0, 3))
-
-                # Water
-                water = (area / 1000) * 0.3 * hr_factor * wd_factor * np.random.normal(1, 0.1)
-
-                # Occupancy
-                if btype in ("office", "school"):
-                    occ = 5.0 * hr_factor * wd_factor + np.random.normal(0, 0.5)
-                elif btype == "hospital":
-                    occ = 3.0 + np.random.normal(0, 0.3)
-                elif btype == "commercial":
-                    occ = 8.0 * hr_factor * wd_factor + np.random.normal(0, 1)
-                else:
-                    occ = 2.0 + np.random.normal(0, 0.3)
-                occ = max(0, occ)
-
-                # Inject anomalies
-                is_anomaly = random.random() < anomaly_rate
-                if is_anomaly:
-                    anomaly_choice = random.choice(["spike", "low_cop", "temp"])
-                    if anomaly_choice == "spike":
-                        electricity *= random.uniform(2.5, 4.0)
-                    elif anomaly_choice == "temp":
-                        supply_temp += random.uniform(8, 15)
-
-                record = {
-                    "building_id": bld["building_id"],
-                    "timestamp": ts.isoformat(),
-                    "electricity_kwh": round(max(0, electricity), 2),
-                    "water_m3": round(max(0, water), 3),
-                    "gas_m3": round(max(0, (area / 1000) * 0.1 * hvac_factor * np.random.normal(1, 0.05)), 3),
-                    "hvac_kwh": round(max(0, hvac_kwh), 2),
-                    "hvac_supply_temp": round(supply_temp, 1),
-                    "hvac_return_temp": round(return_temp, 1),
-                    "hvac_flow_rate": round(max(0, flow_rate), 1),
-                    "outdoor_temp": round(outdoor_temp, 1),
-                    "outdoor_humidity": round(outdoor_humidity, 1),
-                    "occupancy_density": round(occ, 1),
-                }
-                energy_records.append(record)
+            ts += timedelta(hours=1)
 
     # Generate equipment status (daily snapshots)
     for equip in equipment_list:
-        for day in range(days):
-            dt = start_date + timedelta(days=day)
+        for day in range(days + 1):
+            dt = (start_hour + timedelta(days=day)).replace(
+                minute=0,
+                second=0,
+                microsecond=0,
+            )
             ts = dt.replace(hour=12, minute=0, second=0)
 
             is_abnormal = random.random() < 0.03
@@ -283,6 +339,7 @@ def generate_data(
                     ),
                     "runtime_hours": round(day * 8 + np.random.uniform(0, 8), 1),
                     "error_code": error_code,
+                    "notes": "" if not is_abnormal else "Synthetic abnormal event for testing",
                 }
             )
 
@@ -291,15 +348,49 @@ def generate_data(
         "energy_records": energy_records,
         "equipment": equipment_list,
         "equipment_status": equipment_status_records,
+        "anomaly_events": anomaly_events,
     }
 
 
+def _save_csv(filepath: Path, records: list[dict]):
+    if not records:
+        return
+
+    with open(filepath, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=list(records[0].keys()))
+        writer.writeheader()
+        writer.writerows(records)
+
+
 def main():
+    parser = argparse.ArgumentParser(
+        description="Generate synthetic building energy CSV files for manual import."
+    )
+    parser.add_argument(
+        "--days",
+        type=int,
+        default=7,
+        help="Generate data distributed in the previous N days (default: 7)",
+    )
+    parser.add_argument(
+        "--anomaly-rate",
+        type=float,
+        default=0.05,
+        help="Probability of hourly record anomaly injection (default: 0.05)",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help="Random seed for reproducible synthetic data (default: 42)",
+    )
+    args = parser.parse_args()
+
     data_dir = Path(__file__).parent.parent / "data"
     data_dir.mkdir(exist_ok=True)
 
-    print("Generating synthetic data...")
-    data = generate_data()
+    print("Generating synthetic CSV data for manual import...")
+    data = generate_data(days=args.days, anomaly_rate=args.anomaly_rate, seed=args.seed)
 
     print(f"  Buildings: {len(data['buildings'])}")
     print(f"  Energy records: {len(data['energy_records'])}")
@@ -307,12 +398,11 @@ def main():
     print(f"  Equipment status: {len(data['equipment_status'])}")
 
     for key, records in data.items():
-        filepath = data_dir / f"{key}.json"
-        with open(filepath, "w", encoding="utf-8") as f:
-            json.dump(records, f, ensure_ascii=False, indent=2)
+        filepath = data_dir / f"{key}.csv"
+        _save_csv(filepath, records)
         print(f"  Saved {filepath}")
 
-    print("Done!")
+    print("Done. You can manually import these CSV files into database tables.")
 
 
 if __name__ == "__main__":
