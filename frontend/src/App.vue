@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider :theme-overrides="themeOverrides">
+  <n-config-provider :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN">
     <n-message-provider>
       <AppLayout />
     </n-message-provider>
@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { NConfigProvider, NMessageProvider, type GlobalThemeOverrides } from 'naive-ui'
+import { zhCN, dateZhCN } from 'naive-ui'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useBuildingStore } from '@/stores/building'
 
