@@ -11,5 +11,8 @@ export interface AnomalyEvent {
   description: string
   resolved: boolean
   detection_method: string
+  equipment_type?: string
+  fault_code?: string
+  recommended_action?: string
   created_at: string
 }

@@ -1,9 +1,7 @@
-from datetime import datetime
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import EnergyRecord
-from app.schemas.energy import EnergyRecordCreate, ImportResult
+from app.models.energy_meter import EnergyMeter
+from app.schemas.energy_meter import EnergyMeterCreate, ImportResult
 
 
 class ImportService:
@@ -12,25 +10,22 @@ class ImportService:
 
     async def bulk_import_energy(
         self,
-        records: list[EnergyRecordCreate],
+        records: list[EnergyMeterCreate],
         on_conflict: str = "skip",
     ) -> ImportResult:
         total = len(records)
         inserted = 0
-        skipped = 0
         errors = 0
         error_details: list[str] = []
 
         for i, rec in enumerate(records):
             try:
-                energy = EnergyRecord(**rec.model_dump())
-                self.db.add(energy)
+                self.db.add(EnergyMeter(**rec.model_dump()))
                 inserted += 1
             except Exception as e:
                 errors += 1
                 error_details.append(f"Record {i}: {str(e)}")
 
-            # Flush in batches
             if inserted % 500 == 0 and inserted > 0:
                 await self.db.flush()
 
@@ -40,7 +35,7 @@ class ImportService:
         return ImportResult(
             total=total,
             inserted=inserted,
-            skipped=skipped,
+            skipped=0,
             errors=errors,
             error_details=error_details[:50],
         )

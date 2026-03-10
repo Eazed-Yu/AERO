@@ -21,6 +21,13 @@ class Building(TimestampMixin, Base):
     address: Mapped[str | None] = mapped_column(String(512), nullable=True)
     floors: Mapped[int | None] = mapped_column(nullable=True)
     year_built: Mapped[int | None] = mapped_column(nullable=True)
+    # HVAC design fields
+    climate_zone: Mapped[str | None] = mapped_column(
+        String(32), nullable=True
+    )
+    cooling_area: Mapped[float | None] = mapped_column(nullable=True)
+    design_cooling_load: Mapped[float | None] = mapped_column(nullable=True)
+    design_heating_load: Mapped[float | None] = mapped_column(nullable=True)
 
     __table_args__ = (
         CheckConstraint("area > 0", name="ck_building_area_positive"),

@@ -1,5 +1,5 @@
-import api from '.'
-import type { AggregationResult, COPResult, AnomalyStatistics } from '@/types/statistics'
+import api from './index'
+import type { AggregationResult, AnomalyStatistics, COPResult, EUIResult, PlantEfficiencyResult } from '@/types/statistics'
 
 export const statisticsApi = {
   aggregate: (params: {
@@ -11,11 +11,24 @@ export const statisticsApi = {
   }) => api.get<AggregationResult[]>('/statistics/aggregate', { params }),
 
   cop: (params: {
+    start_time: string
+    end_time: string
+    device_id?: string
+    building_id?: string
+    period?: string
+  }) => api.get<COPResult[]>('/statistics/cop', { params }),
+
+  eui: (params: {
     building_id: string
     start_time: string
     end_time: string
+  }) => api.get<EUIResult>('/statistics/eui', { params }),
+
+  plantEfficiency: (params: {
+    start_time: string
+    end_time: string
     period?: string
-  }) => api.get<COPResult[]>('/statistics/cop', { params }),
+  }) => api.get<PlantEfficiencyResult[]>('/statistics/plant-efficiency', { params }),
 
   anomalySummary: (params: {
     start_time: string

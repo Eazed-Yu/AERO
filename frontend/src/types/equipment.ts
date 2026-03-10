@@ -4,19 +4,15 @@ export interface Equipment {
   device_id: string
   device_name: string
   device_type: string
+  system_type?: string
+  model?: string
+  manufacturer?: string
   rated_power_kw?: number
+  rated_capacity?: number
+  rated_cop?: number
+  location?: string
+  install_date?: string
+  status?: string
   created_at: string
   updated_at: string
-}
-
-export interface EquipmentStatus {
-  id: number
-  device_id: string
-  timestamp: string
-  status: string
-  power_consumption_kw?: number
-  runtime_hours?: number
-  error_code?: string
-  notes?: string
-  created_at: string
 }

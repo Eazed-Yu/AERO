@@ -9,3 +9,11 @@ export interface PaginatedResponse<T> {
 export interface ApiError {
   detail: string
 }
+
+export interface BatchOperationResult {
+  total: number
+  success: number
+  skipped: number
+  failed: number
+  failed_items: string[]
+}

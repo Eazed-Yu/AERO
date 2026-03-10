@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { NUpload, NButton } from 'naive-ui'
-import type { ImportResult } from '@/types/energy'
+import type { ImportResult } from '@/types/energy_meter'
 import type { UploadFileInfo } from 'naive-ui'
 
 const importResult = ref<ImportResult | null>(null)

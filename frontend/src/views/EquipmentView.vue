@@ -12,7 +12,15 @@
       <n-select
         v-model:value="typeFilter"
         :options="deviceTypeOptions"
-        placeholder="全部类型"
+        placeholder="全部设备类型"
+        clearable
+        size="small"
+        style="width: 160px"
+      />
+      <n-select
+        v-model:value="systemFilter"
+        :options="systemTypeOptions"
+        placeholder="全部系统类型"
         clearable
         size="small"
         style="width: 160px"
@@ -29,28 +37,77 @@
         :row-key="(row: Equipment) => row.device_id"
         size="small"
         :bordered="false"
+        :scroll-x="1600"
       />
     </div>
 
-    <n-modal v-model:show="showModal" preset="card" :title="modalTitle" style="width: 700px">
+    <n-modal v-model:show="showModal" preset="card" :title="modalTitle" style="width: 800px">
       <n-form ref="formRef" :model="form" :rules="rules" label-placement="left" label-width="110">
-        <n-grid :cols="2" :x-gap="12">
-          <n-form-item-gi label="建筑ID" path="building_id">
-            <n-input v-model:value="form.building_id" />
-          </n-form-item-gi>
-          <n-form-item-gi label="设备ID" path="device_id">
-            <n-input v-model:value="form.device_id" :disabled="mode === 'edit'" />
-          </n-form-item-gi>
-          <n-form-item-gi label="设备名称" path="device_name">
-            <n-input v-model:value="form.device_name" />
-          </n-form-item-gi>
-          <n-form-item-gi label="设备类型" path="device_type">
-            <n-input v-model:value="form.device_type" />
-          </n-form-item-gi>
-          <n-form-item-gi label="额定功率(kW)">
-            <n-input-number v-model:value="form.rated_power_kw" :min="0" style="width: 100%" />
-          </n-form-item-gi>
-        </n-grid>
+        <n-space vertical :size="0">
+          <n-space :size="12">
+            <n-form-item label="设备ID" path="device_id" style="width: 340px">
+              <n-input v-model:value="form.device_id" :disabled="mode === 'edit'" placeholder="唯一标识" />
+            </n-form-item>
+            <n-form-item label="设备名称" path="device_name" style="width: 340px">
+              <n-input v-model:value="form.device_name" placeholder="设备名称" />
+            </n-form-item>
+          </n-space>
+          <n-space :size="12">
+            <n-form-item label="设备类型" path="device_type" style="width: 340px">
+              <n-select v-model:value="form.device_type" :options="deviceTypeOptions" placeholder="选择设备类型" />
+            </n-form-item>
+            <n-form-item label="系统类型" path="system_type" style="width: 340px">
+              <n-select v-model:value="form.system_type" :options="systemTypeOptions" placeholder="选择系统类型" />
+            </n-form-item>
+          </n-space>
+          <n-space :size="12">
+            <n-form-item label="建筑ID" path="building_id" style="width: 340px">
+              <n-select
+                v-model:value="form.building_id"
+                :options="buildingOptions"
+                placeholder="选择建筑"
+                filterable
+              />
+            </n-form-item>
+            <n-form-item label="状态" style="width: 340px">
+              <n-select v-model:value="form.status" :options="statusOptions" placeholder="选择状态" />
+            </n-form-item>
+          </n-space>
+          <n-space :size="12">
+            <n-form-item label="型号" style="width: 340px">
+              <n-input v-model:value="form.model" placeholder="设备型号" />
+            </n-form-item>
+            <n-form-item label="制造商" style="width: 340px">
+              <n-input v-model:value="form.manufacturer" placeholder="制造商" />
+            </n-form-item>
+          </n-space>
+          <n-space :size="12">
+            <n-form-item label="额定功率(kW)" style="width: 340px">
+              <n-input-number v-model:value="form.rated_power_kw" :min="0" style="width: 100%" placeholder="kW" />
+            </n-form-item>
+            <n-form-item label="额定容量" style="width: 340px">
+              <n-input-number v-model:value="form.rated_capacity" :min="0" style="width: 100%" placeholder="额定容量" />
+            </n-form-item>
+          </n-space>
+          <n-space :size="12">
+            <n-form-item label="额定COP" style="width: 340px">
+              <n-input-number v-model:value="form.rated_cop" :min="0" :step="0.1" style="width: 100%" placeholder="额定COP" />
+            </n-form-item>
+            <n-form-item label="安装位置" style="width: 340px">
+              <n-input v-model:value="form.location" placeholder="安装位置" />
+            </n-form-item>
+          </n-space>
+          <n-space :size="12">
+            <n-form-item label="安装日期" style="width: 340px">
+              <n-date-picker
+                v-model:value="installDateTs"
+                type="date"
+                clearable
+                style="width: 100%"
+              />
+            </n-form-item>
+          </n-space>
+        </n-space>
       </n-form>
       <template #footer>
         <div style="display:flex; justify-content:flex-end; gap:8px;">
@@ -71,10 +128,11 @@ import {
   NTag,
   NModal,
   NForm,
-  NFormItemGi,
-  NGrid,
+  NFormItem,
   NInput,
   NInputNumber,
+  NDatePicker,
+  NSpace,
   useMessage,
   useDialog,
   type DataTableColumn,
@@ -95,25 +153,37 @@ const saving = ref(false)
 const showModal = ref(false)
 const mode = ref<'create' | 'edit'>('create')
 const formRef = ref<FormInst | null>(null)
+const installDateTs = ref<number | null>(null)
+
 const form = ref({
   building_id: '',
   device_id: '',
   device_name: '',
   device_type: '',
+  system_type: '',
+  model: '',
+  manufacturer: '',
   rated_power_kw: null as number | null,
+  rated_capacity: null as number | null,
+  rated_cop: null as number | null,
+  location: '',
+  install_date: '',
+  status: 'active',
 })
 
 const modalTitle = computed(() => (mode.value === 'create' ? '新增设备' : '编辑设备'))
 
 const rules: FormRules = {
-  building_id: [{ required: true, message: '请输入建筑ID', trigger: ['blur', 'input'] }],
+  building_id: [{ required: true, message: '请选择建筑', trigger: ['blur', 'change'] }],
   device_id: [{ required: true, message: '请输入设备ID', trigger: ['blur', 'input'] }],
   device_name: [{ required: true, message: '请输入设备名称', trigger: ['blur', 'input'] }],
-  device_type: [{ required: true, message: '请输入设备类型', trigger: ['blur', 'input'] }],
+  device_type: [{ required: true, message: '请选择设备类型', trigger: ['blur', 'change'] }],
+  system_type: [{ required: true, message: '请选择系统类型', trigger: ['blur', 'change'] }],
 }
 
 const buildingFilter = ref<string | null>(buildingStore.current || null)
 const typeFilter = ref<string | null>(null)
+const systemFilter = ref<string | null>(null)
 
 const buildingOptions = computed(() =>
   buildingStore.buildings.map((b) => ({
@@ -122,27 +192,60 @@ const buildingOptions = computed(() =>
   }))
 )
 
-const deviceTypeOptions = computed(() => {
-  const types = new Set(equipment.value.map((e) => e.device_type))
-  return Array.from(types).map((t) => ({ label: t, value: t }))
-})
+const deviceTypeOptions = [
+  { label: 'chiller', value: 'chiller' },
+  { label: 'ahu', value: 'ahu' },
+  { label: 'boiler', value: 'boiler' },
+  { label: 'vav', value: 'vav' },
+  { label: 'chw_pump', value: 'chw_pump' },
+  { label: 'cw_pump', value: 'cw_pump' },
+  { label: 'hw_pump', value: 'hw_pump' },
+  { label: 'cooling_tower', value: 'cooling_tower' },
+]
+
+const systemTypeOptions = [
+  { label: 'cooling_plant', value: 'cooling_plant' },
+  { label: 'air_system', value: 'air_system' },
+  { label: 'heating_plant', value: 'heating_plant' },
+  { label: 'terminal', value: 'terminal' },
+]
+
+const statusOptions = [
+  { label: 'active', value: 'active' },
+  { label: 'inactive', value: 'inactive' },
+  { label: 'maintenance', value: 'maintenance' },
+]
+
+const statusTypeMap: Record<string, 'success' | 'warning' | 'default'> = {
+  active: 'success',
+  inactive: 'warning',
+  maintenance: 'default',
+}
 
 const columns: DataTableColumn<Equipment>[] = [
-  { title: '设备ID', key: 'device_id', width: 140, ellipsis: { tooltip: true } },
-  { title: '设备名称', key: 'device_name', width: 180 },
+  { title: '设备ID', key: 'device_id', width: 140, ellipsis: { tooltip: true }, fixed: 'left' },
+  { title: '设备名称', key: 'device_name', width: 160 },
   {
-    title: '类型',
+    title: '设备类型',
     key: 'device_type',
+    width: 110,
+    render(row) {
+      return h(NTag, { size: 'small', bordered: false }, { default: () => row.device_type })
+    },
+  },
+  {
+    title: '系统类型',
+    key: 'system_type',
     width: 120,
     render(row) {
-      return h(
-        NTag,
-        { size: 'small', bordered: false },
-        { default: () => row.device_type }
-      )
+      return row.system_type
+        ? h(NTag, { size: 'small', bordered: false, type: 'info' }, { default: () => row.system_type })
+        : '--'
     },
   },
   { title: '建筑ID', key: 'building_id', width: 130, ellipsis: { tooltip: true } },
+  { title: '型号', key: 'model', width: 120, ellipsis: { tooltip: true }, render(row) { return row.model || '--' } },
+  { title: '制造商', key: 'manufacturer', width: 120, ellipsis: { tooltip: true }, render(row) { return row.manufacturer || '--' } },
   {
     title: '额定功率(kW)',
     key: 'rated_power_kw',
@@ -153,25 +256,46 @@ const columns: DataTableColumn<Equipment>[] = [
     },
   },
   {
-    title: '创建时间',
-    key: 'created_at',
-    width: 170,
+    title: '额定容量',
+    key: 'rated_capacity',
+    width: 100,
+    align: 'right',
     render(row) {
-      return row.created_at?.replace('T', ' ').slice(0, 19) ?? ''
+      return row.rated_capacity != null ? row.rated_capacity.toFixed(1) : '--'
     },
   },
   {
-    title: '更新时间',
-    key: 'updated_at',
-    width: 170,
+    title: '额定COP',
+    key: 'rated_cop',
+    width: 90,
+    align: 'right',
     render(row) {
-      return row.updated_at?.replace('T', ' ').slice(0, 19) ?? ''
+      return row.rated_cop != null ? row.rated_cop.toFixed(2) : '--'
+    },
+  },
+  { title: '安装位置', key: 'location', width: 120, ellipsis: { tooltip: true }, render(row) { return row.location || '--' } },
+  {
+    title: '安装日期',
+    key: 'install_date',
+    width: 110,
+    render(row) {
+      return row.install_date?.slice(0, 10) ?? '--'
+    },
+  },
+  {
+    title: '状态',
+    key: 'status',
+    width: 90,
+    render(row) {
+      const s = row.status || 'active'
+      return h(NTag, { size: 'small', bordered: false, type: statusTypeMap[s] || 'default' }, { default: () => s })
     },
   },
   {
     title: '操作',
     key: 'actions',
-    width: 150,
+    width: 140,
+    fixed: 'right',
     render(row) {
       return h('div', { style: 'display:flex;gap:8px;' }, [
         h(
@@ -195,8 +319,17 @@ function resetForm() {
     device_id: '',
     device_name: '',
     device_type: '',
+    system_type: '',
+    model: '',
+    manufacturer: '',
     rated_power_kw: null,
+    rated_capacity: null,
+    rated_cop: null,
+    location: '',
+    install_date: '',
+    status: 'active',
   }
+  installDateTs.value = null
 }
 
 function openCreate() {
@@ -212,8 +345,17 @@ function openEdit(row: Equipment) {
     device_id: row.device_id,
     device_name: row.device_name,
     device_type: row.device_type,
+    system_type: row.system_type || '',
+    model: row.model || '',
+    manufacturer: row.manufacturer || '',
     rated_power_kw: row.rated_power_kw ?? null,
+    rated_capacity: row.rated_capacity ?? null,
+    rated_cop: row.rated_cop ?? null,
+    location: row.location || '',
+    install_date: row.install_date || '',
+    status: row.status || 'active',
   }
+  installDateTs.value = row.install_date ? new Date(row.install_date).getTime() : null
   showModal.value = true
 }
 
@@ -223,6 +365,7 @@ async function fetchEquipment() {
     const params: Record<string, any> = {}
     if (buildingFilter.value) params.building_id = buildingFilter.value
     if (typeFilter.value) params.device_type = typeFilter.value
+    if (systemFilter.value) params.system_type = systemFilter.value
 
     const { data } = await equipmentApi.list(params)
     equipment.value = data
@@ -236,23 +379,37 @@ async function fetchEquipment() {
 async function submit() {
   await formRef.value?.validate()
   saving.value = true
+
+  // Convert install date timestamp to string
+  if (installDateTs.value) {
+    form.value.install_date = new Date(installDateTs.value).toISOString().slice(0, 10)
+  } else {
+    form.value.install_date = ''
+  }
+
   try {
+    const payload: Partial<Equipment> = {
+      building_id: form.value.building_id,
+      device_id: form.value.device_id,
+      device_name: form.value.device_name,
+      device_type: form.value.device_type,
+      system_type: form.value.system_type || undefined,
+      model: form.value.model || undefined,
+      manufacturer: form.value.manufacturer || undefined,
+      rated_power_kw: form.value.rated_power_kw ?? undefined,
+      rated_capacity: form.value.rated_capacity ?? undefined,
+      rated_cop: form.value.rated_cop ?? undefined,
+      location: form.value.location || undefined,
+      install_date: form.value.install_date || undefined,
+      status: form.value.status || undefined,
+    }
+
     if (mode.value === 'create') {
-      await equipmentApi.create({
-        building_id: form.value.building_id,
-        device_id: form.value.device_id,
-        device_name: form.value.device_name,
-        device_type: form.value.device_type,
-        rated_power_kw: form.value.rated_power_kw ?? undefined,
-      })
+      await equipmentApi.create(payload)
       message.success('新增成功')
     } else {
-      await equipmentApi.update(form.value.device_id, {
-        building_id: form.value.building_id,
-        device_name: form.value.device_name,
-        device_type: form.value.device_type,
-        rated_power_kw: form.value.rated_power_kw ?? undefined,
-      })
+      const { device_id, ...updatePayload } = payload
+      await equipmentApi.update(form.value.device_id, updatePayload)
       message.success('更新成功')
     }
     showModal.value = false
@@ -267,7 +424,7 @@ async function submit() {
 function remove(row: Equipment) {
   dialog.warning({
     title: '确认删除',
-    content: `确定删除设备 ${row.device_id} 吗？`,
+    content: `确定删除设备 ${row.device_name} (${row.device_id}) 吗？`,
     positiveText: '删除',
     negativeText: '取消',
     onPositiveClick: async () => {

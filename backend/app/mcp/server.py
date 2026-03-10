@@ -36,6 +36,29 @@ except ImportError:
 _mcp_enabled: bool = settings.ENABLE_MCP
 
 
+def _normalize_public_base(origin: str | None = None) -> str:
+    """Resolve the externally reachable base URL for MCP clients."""
+    configured = (settings.MCP_PUBLIC_BASE_URL or "").strip()
+    if configured:
+        return configured.rstrip("/")
+    if origin:
+        return origin.rstrip("/")
+    return f"http://localhost:{settings.APP_PORT}"
+
+
+def get_mcp_mount_path() -> str:
+    """Return normalized mount path (always starts with '/')."""
+    path = (settings.MCP_BASE_PATH or "/mcp").strip()
+    if not path:
+        return "/mcp"
+    return path if path.startswith("/") else f"/{path}"
+
+
+def get_mcp_endpoint(origin: str | None = None) -> str:
+    """Return full MCP streamable-http endpoint URL."""
+    return f"{_normalize_public_base(origin)}{get_mcp_mount_path()}/"
+
+
 def is_mcp_enabled() -> bool:
     return MCP_AVAILABLE and _mcp_enabled
 
@@ -51,7 +74,7 @@ def get_mcp_lifespan_context():
     return _mcp_lifespan_context
 
 
-async def get_mcp_status() -> dict:
+async def get_mcp_status(origin: str | None = None) -> dict:
     """Return MCP runtime status and tool list."""
     tools = []
     if MCP_AVAILABLE and mcp is not None:
@@ -76,14 +99,50 @@ async def get_mcp_status() -> dict:
             })
 
     return {
-        "name": "aero-energy-mcp",
+        "name": settings.MCP_SERVER_NAME,
         "enabled": is_mcp_enabled(),
         "available": MCP_AVAILABLE,
         "tool_count": len(tools),
         "tools": tools,
-        "endpoint": "/mcp/" if is_mcp_enabled() else None,
+        "mount_path": get_mcp_mount_path(),
+        "endpoint": get_mcp_endpoint(origin),
         "transport": "streamable-http",
         "mount_error": _mount_error,
+    }
+
+
+async def get_mcp_client_config(origin: str | None = None) -> dict:
+    """Return MCP client config snippets for common MCP clients."""
+    endpoint = get_mcp_endpoint(origin)
+    tools = []
+    if MCP_AVAILABLE and mcp is not None:
+        from app.mcp import tools as _tools  # noqa: F401
+
+        tools = [tool.name for tool in await mcp.list_tools()]
+
+    return {
+        "server_name": settings.MCP_SERVER_NAME,
+        "endpoint": endpoint,
+        "transport": "streamable-http",
+        "claudeDesktop": {
+            "mcpServers": {
+                settings.MCP_SERVER_NAME: {
+                    "command": "npx",
+                    "args": ["-y", "mcp-remote", endpoint],
+                    "env": {},
+                    "disabled": False,
+                    "autoApprove": tools,
+                }
+            }
+        },
+        "cherryStudio": {
+            "mcpServers": {
+                settings.MCP_SERVER_NAME: {
+                    "type": "streamableHttp",
+                    "url": endpoint,
+                }
+            }
+        },
     }
 
 
@@ -106,10 +165,10 @@ def mount_mcp(fastapi_app) -> None:
             transport="streamable-http",
             stateless_http=True,
         )
-        fastapi_app.mount("/mcp", mcp_app)
+        fastapi_app.mount(get_mcp_mount_path(), mcp_app)
         _mcp_lifespan_context = getattr(mcp_app.router, "lifespan_context", None)
         _mount_error = None
-        logger.info("MCP server mounted at /mcp")
+        logger.info("MCP server mounted at %s", get_mcp_mount_path())
     except Exception as e:
         _mount_error = str(e)
         _mcp_lifespan_context = None

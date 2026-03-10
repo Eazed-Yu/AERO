@@ -29,6 +29,12 @@ class AnomalyEvent(Base):
     detection_method: Mapped[str] = mapped_column(
         String(32), default="threshold", nullable=False
     )
+    # New fields
+    equipment_type: Mapped[str | None] = mapped_column(
+        String(32), nullable=True
+    )
+    fault_code: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    recommended_action: Mapped[str | None] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         server_default="now()", nullable=False
     )

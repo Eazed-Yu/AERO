@@ -16,8 +16,8 @@ const router = createRouter({
     },
     {
       path: '/energy',
-      component: () => import('@/views/EnergyQueryView.vue'),
-      meta: { title: '能耗查询' }
+      component: () => import('@/views/EnergyView.vue'),
+      meta: { title: '能耗监测' }
     },
     {
       path: '/statistics',
@@ -32,7 +32,12 @@ const router = createRouter({
     {
       path: '/equipment',
       component: () => import('@/views/EquipmentView.vue'),
-      meta: { title: '设备监控' }
+      meta: { title: '设备管理' }
+    },
+    {
+      path: '/hvac',
+      component: () => import('@/views/HVACMonitorView.vue'),
+      meta: { title: '暖通监测' }
     },
     {
       path: '/import',

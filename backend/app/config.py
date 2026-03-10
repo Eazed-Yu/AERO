@@ -55,6 +55,9 @@ class Settings(BaseSettings):
 
     # MCP
     ENABLE_MCP: bool = True
+    MCP_SERVER_NAME: str = "aero-energy"
+    MCP_BASE_PATH: str = "/mcp"
+    MCP_PUBLIC_BASE_URL: str = ""
 
     # App
     APP_HOST: str = "0.0.0.0"

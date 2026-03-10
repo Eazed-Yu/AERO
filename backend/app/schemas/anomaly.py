@@ -14,6 +14,9 @@ class AnomalyEventBase(BaseModel):
     threshold_value: float | None = None
     description: str
     detection_method: str = "threshold"
+    equipment_type: str | None = Field(None, max_length=32)
+    fault_code: str | None = Field(None, max_length=32)
+    recommended_action: str | None = None
 
 
 class AnomalyEventCreate(AnomalyEventBase):
@@ -32,6 +35,9 @@ class AnomalyEventUpdate(BaseModel):
     description: str | None = None
     detection_method: str | None = None
     resolved: bool | None = None
+    equipment_type: str | None = Field(None, max_length=32)
+    fault_code: str | None = Field(None, max_length=32)
+    recommended_action: str | None = None
 
 
 class AnomalyEventResponse(AnomalyEventBase):

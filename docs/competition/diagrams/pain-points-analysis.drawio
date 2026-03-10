@@ -1,0 +1,106 @@
+<mxfile host="65bd71144e">
+    <diagram name="行业痛点分析" id="pain-points-analysis">
+        <mxGraphModel dx="960" dy="461" grid="0" gridSize="2" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1920" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="pain1-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#C62828;shadow=1;arcSize=12;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="130" width="280" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain1-title" value="痛点一：数据层面" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#C62828;fontStyle=1;fontSize=14;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="140" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain1-icon" value="能耗数据分散、格式不统一" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#C62828;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="180" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain1-d1" value="- 多品牌设备，数据格式各异" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="210" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain1-d2" value="- BACnet/Modbus等协议互不兼容" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="230" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain1-d3" value="- 数据孤岛严重，跨系统整合困难" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="250" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain1-d4" value="- 月度报表编制耗时2-3个工作日" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="270" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain1-impact" value="影响：查询统计效率低、决策支撑不足" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#FFCDD2;fontSize=14;fontStyle=2;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="300" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain2-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;shadow=1;arcSize=12;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="130" width="280" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain2-title" value="痛点二：运维层面" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#1565C0;fontStyle=1;fontSize=14;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="140" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain2-icon" value="依赖人工经验、知识传承困难" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#1565C0;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="180" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain2-d1" value="- 故障诊断依赖老师傅经验" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="210" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain2-d2" value="- 运维知识散落在各类手册中" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="230" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain2-d3" value="- 新员工需3-5年积累独立运维能力" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="250" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain2-d4" value="- 人工成本占运维总成本40%以上" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="270" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain2-impact" value="影响：故障响应慢、人员流失致知识断层" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#BBDEFB;fontSize=14;fontStyle=2;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="300" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain3-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;shadow=1;arcSize=12;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="370" width="280" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain3-title" value="痛点三：分析层面" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#E65100;fontStyle=1;fontSize=14;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="380" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain3-icon" value="缺乏智能化分析手段" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#E65100;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="410" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain3-d1" value="- 异常检测依赖固定阈值" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="440" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain3-d2" value="- 缺乏多传感器联动分析" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="460" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain3-d3" value="- 统计报表需人工编制" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="480" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain3-d4" value="- 能耗预测精度有限" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="500" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain3-impact" value="影响：异常发现滞后、节能优化缺乏支撑" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#FFE0B2;fontSize=14;fontStyle=2;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="530" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain4-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;shadow=1;arcSize=12;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="360" width="280" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain4-title" value="痛点四：交互层面" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#2E7D32;fontStyle=1;fontSize=14;fontColor=#FFFFFF;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="370" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain4-icon" value="系统间数据孤岛严重" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#2E7D32;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="410" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain4-d1" value="- 各系统API设计规范不统一" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="440" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain4-d2" value="- 与AI工具集成需大量定制开发" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="460" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain4-d3" value="- 缺乏统一的数据查询语义" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="480" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain4-d4" value="- 自然语言查询难以实现" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="500" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pain4-impact" value="影响：AI能力无法渗透运维流程" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#C8E6C9;fontSize=14;fontStyle=2;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="530" width="240" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

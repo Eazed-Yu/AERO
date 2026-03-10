@@ -7,6 +7,11 @@ class ExportRequest(BaseModel):
     end_time: str | None = None
     metrics: list[str] | None = None
     format: str = Field("csv", pattern="^(csv|excel)$")
+    data_type: str = Field(
+        "energy",
+        pattern="^(energy|chiller|ahu|boiler|vav|pump|cooling_tower|weather)$",
+    )
+    device_id: str | None = None
 
 
 class QAQueryRequest(BaseModel):

@@ -5,19 +5,16 @@ from .anomaly import (
     AnomalyEventUpdate,
 )
 from .building import BuildingCreate, BuildingResponse, BuildingUpdate
-from .energy import (
+from .energy_meter import (
     EnergyImportRequest,
-    EnergyRecordCreate,
-    EnergyRecordResponse,
-    EnergyRecordUpdate,
+    EnergyMeterCreate,
+    EnergyMeterResponse,
+    EnergyMeterUpdate,
     ImportResult,
 )
 from .equipment import (
     EquipmentCreate,
     EquipmentResponse,
-    EquipmentStatusCreate,
-    EquipmentStatusResponse,
-    EquipmentStatusUpdate,
     EquipmentUpdate,
 )
 from .query import EnergyQueryParams, PaginatedResponse
@@ -28,17 +25,14 @@ __all__ = [
     "BuildingCreate",
     "BuildingUpdate",
     "BuildingResponse",
-    "EnergyRecordCreate",
-    "EnergyRecordResponse",
-    "EnergyRecordUpdate",
+    "EnergyMeterCreate",
+    "EnergyMeterResponse",
+    "EnergyMeterUpdate",
     "EnergyImportRequest",
     "ImportResult",
     "EquipmentCreate",
     "EquipmentResponse",
-    "EquipmentStatusCreate",
-    "EquipmentStatusResponse",
     "EquipmentUpdate",
-    "EquipmentStatusUpdate",
     "AnomalyEventCreate",
     "AnomalyEventResponse",
     "AnomalyEventUpdate",

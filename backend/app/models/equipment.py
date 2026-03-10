@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import date, datetime
 
-from sqlalchemy import CheckConstraint, Index, String
+from sqlalchemy import Index, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base, TimestampMixin, generate_uuid
@@ -20,27 +20,24 @@ class Equipment(TimestampMixin, Base):
     )
     device_name: Mapped[str] = mapped_column(String(255), nullable=False)
     device_type: Mapped[str] = mapped_column(String(64), nullable=False)
-    rated_power_kw: Mapped[float | None] = mapped_column(nullable=True)
-    install_date: Mapped[datetime | None] = mapped_column(nullable=True)
-
-
-class EquipmentStatus(Base):
-    __tablename__ = "equipment_status"
-
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    device_id: Mapped[str] = mapped_column(
-        String(128), nullable=False, index=True
+    # New fields
+    system_type: Mapped[str | None] = mapped_column(
+        String(32), nullable=True
     )
-    timestamp: Mapped[datetime] = mapped_column(nullable=False, index=True)
-    status: Mapped[str] = mapped_column(String(32), nullable=False)
-    power_consumption_kw: Mapped[float | None] = mapped_column(nullable=True)
-    runtime_hours: Mapped[float | None] = mapped_column(nullable=True)
-    error_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    notes: Mapped[str | None] = mapped_column(nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        server_default="now()", nullable=False
+    model: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    manufacturer: Mapped[str | None] = mapped_column(
+        String(128), nullable=True
+    )
+    rated_power_kw: Mapped[float | None] = mapped_column(nullable=True)
+    rated_capacity: Mapped[float | None] = mapped_column(nullable=True)
+    rated_cop: Mapped[float | None] = mapped_column(nullable=True)
+    location: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    install_date: Mapped[date | None] = mapped_column(nullable=True)
+    status: Mapped[str | None] = mapped_column(
+        String(32), default="active", nullable=True
     )
 
     __table_args__ = (
-        Index("idx_equip_status_device_time", "device_id", "timestamp"),
+        Index("idx_equipment_type", "device_type"),
+        Index("idx_equipment_system", "system_type"),
     )

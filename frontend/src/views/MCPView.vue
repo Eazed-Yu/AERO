@@ -45,6 +45,20 @@
         <code class="info-value">{{ mcpEndpointUrl }}</code>
         <n-button text size="tiny" @click="copyText(mcpEndpointUrl)">复制</n-button>
       </div>
+      <div style="margin-top: 10px; font-size: 12px; color: var(--text-secondary)">
+        建议对外通过 HTTPS 暴露该端点，供 Cherry Studio、Claude Desktop、Cursor 等客户端导入。
+      </div>
+    </div>
+
+    <!-- 客户接入流程 -->
+    <div class="surface" style="padding: 24px; margin-bottom: 16px">
+      <div class="section-title" style="margin-bottom: 12px">客户接入流程</div>
+      <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.8">
+        1. 确认服务端可访问（建议公网 HTTPS 或企业内网网关）<br>
+        2. 将下方对应客户端配置粘贴到客户端 MCP 设置中<br>
+        3. 刷新客户端并执行 <code>health_check</code> 工具验证连通性<br>
+        4. 再执行 <code>get_capabilities</code> 与业务工具进行验收
+      </div>
     </div>
 
     <!-- 配置指南 -->
@@ -124,47 +138,24 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, h } from 'vue'
 import { NSwitch, NButton, NDataTable, NTag, useMessage } from 'naive-ui'
-import { mcpApi, type MCPStatus } from '@/api/mcp'
+import { mcpApi, type MCPClientConfig, type MCPStatus } from '@/api/mcp'
 
 const message = useMessage()
 const status = ref<MCPStatus | null>(null)
+const clientConfig = ref<MCPClientConfig | null>(null)
 const toggling = ref(false)
 const claudeCopied = ref(false)
 
 const canCopyClaudeConfig = computed(() => {
-  return Boolean(status.value?.available && !status.value?.mount_error)
+  return Boolean(status.value?.available && !status.value?.mount_error && clientConfig.value)
 })
 
 const mcpEndpointUrl = computed(() => {
-  const origin = window.location.origin
-  return `${origin}/mcp/`
+  return clientConfig.value?.endpoint || status.value?.endpoint || '-'
 })
 
 const claudeConfigJson = computed(() => {
-  const port = window.location.port || '8000'
-  return JSON.stringify(
-    {
-      mcpServers: {
-        'aero-energy': {
-          command: 'npx',
-          args: ['-y', 'mcp-remote', `http://localhost:${port}/mcp/`],
-          env: {},
-          disabled: false,
-          autoApprove: [
-            'health_check',
-            'get_capabilities',
-            'query_energy_data',
-            'export_energy_report',
-            'calculate_cop',
-            'detect_anomalies',
-            'get_building_statistics',
-          ]
-        },
-      },
-    },
-    null,
-    2,
-  )
+  return JSON.stringify(clientConfig.value?.claudeDesktop ?? {}, null, 2)
 })
 
 const toolColumns = [
@@ -205,10 +196,14 @@ const toolColumns = [
 
 async function fetchStatus() {
   try {
-    const res = await mcpApi.getStatus()
-    status.value = res.data
+    const [statusRes, configRes] = await Promise.all([
+      mcpApi.getStatus(),
+      mcpApi.getConfig(),
+    ])
+    status.value = statusRes.data
+    clientConfig.value = configRes.data
   } catch {
-    message.error('获取 MCP 状态失败')
+    message.error('获取 MCP 配置失败')
   }
 }
 
@@ -245,19 +240,7 @@ function copyText(text: string) {
 }
 
 const cherryConfigJson = computed(() => {
-  const port = window.location.port || '8000'
-  return JSON.stringify(
-    {
-      mcpServers: {
-        'aero-energy': {
-          type: 'streamableHttp',
-          url: `http://localhost:${port}/mcp/`,
-        },
-      },
-    },
-    null,
-    2,
-  )
+  return JSON.stringify(clientConfig.value?.cherryStudio ?? {}, null, 2)
 })
 
 onMounted(fetchStatus)

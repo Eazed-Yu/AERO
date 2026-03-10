@@ -5,7 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.detection.base import AbstractDetector, DetectionContext
 from app.detection.threshold import ThresholdDetector
-from app.models import AnomalyEvent, EnergyRecord
+from app.models.anomaly import AnomalyEvent
+from app.models.chiller import ChillerRecord
+from app.models.ahu import AHURecord
+from app.models.energy_meter import EnergyMeter
+from app.models.vav import VAVRecord
 from app.schemas.anomaly import AnomalyEventCreate, AnomalyEventUpdate
 
 
@@ -22,24 +26,55 @@ class AnomalyService:
         start_time: datetime,
         end_time: datetime,
     ) -> list[AnomalyEvent]:
-        # Fetch records
-        stmt = (
-            select(EnergyRecord)
-            .where(EnergyRecord.building_id == building_id)
-            .where(EnergyRecord.timestamp >= start_time)
-            .where(EnergyRecord.timestamp <= end_time)
-            .order_by(EnergyRecord.timestamp)
-        )
-        result = await self.db.execute(stmt)
-        records = list(result.scalars().all())
-
-        if not records:
-            return []
-
         context = DetectionContext(building_id=building_id)
-        candidates = await self.detector.detect(records, context)
 
-        # Persist anomaly events
+        # Gather data from multiple sources
+        energy_stmt = (
+            select(EnergyMeter)
+            .where(EnergyMeter.building_id == building_id)
+            .where(EnergyMeter.timestamp >= start_time)
+            .where(EnergyMeter.timestamp <= end_time)
+            .order_by(EnergyMeter.timestamp)
+        )
+        energy_result = await self.db.execute(energy_stmt)
+        energy_records = list(energy_result.scalars().all())
+
+        chiller_stmt = (
+            select(ChillerRecord)
+            .where(ChillerRecord.timestamp >= start_time)
+            .where(ChillerRecord.timestamp <= end_time)
+            .order_by(ChillerRecord.timestamp)
+        )
+        chiller_result = await self.db.execute(chiller_stmt)
+        chiller_records = list(chiller_result.scalars().all())
+
+        ahu_stmt = (
+            select(AHURecord)
+            .where(AHURecord.timestamp >= start_time)
+            .where(AHURecord.timestamp <= end_time)
+            .order_by(AHURecord.timestamp)
+        )
+        ahu_result = await self.db.execute(ahu_stmt)
+        ahu_records = list(ahu_result.scalars().all())
+
+        vav_stmt = (
+            select(VAVRecord)
+            .where(VAVRecord.timestamp >= start_time)
+            .where(VAVRecord.timestamp <= end_time)
+            .order_by(VAVRecord.timestamp)
+        )
+        vav_result = await self.db.execute(vav_stmt)
+        vav_records = list(vav_result.scalars().all())
+
+        all_records = {
+            "energy": energy_records,
+            "chiller": chiller_records,
+            "ahu": ahu_records,
+            "vav": vav_records,
+        }
+
+        candidates = await self.detector.detect(all_records, context)
+
         events = []
         for c in candidates:
             event = AnomalyEvent(
@@ -53,6 +88,9 @@ class AnomalyService:
                 threshold_value=c.get("threshold_value"),
                 description=c["description"],
                 detection_method=c.get("detection_method", "threshold"),
+                equipment_type=c.get("equipment_type"),
+                fault_code=c.get("fault_code"),
+                recommended_action=c.get("recommended_action"),
             )
             self.db.add(event)
             events.append(event)
@@ -65,6 +103,7 @@ class AnomalyService:
         building_id: str | None = None,
         severity: str | None = None,
         resolved: bool | None = None,
+        equipment_type: str | None = None,
         start_time: datetime | None = None,
         end_time: datetime | None = None,
         limit: int = 100,
@@ -76,6 +115,8 @@ class AnomalyService:
             stmt = stmt.where(AnomalyEvent.severity == severity)
         if resolved is not None:
             stmt = stmt.where(AnomalyEvent.resolved == resolved)
+        if equipment_type:
+            stmt = stmt.where(AnomalyEvent.equipment_type == equipment_type)
         if start_time:
             stmt = stmt.where(AnomalyEvent.timestamp >= start_time)
         if end_time:
@@ -110,8 +151,7 @@ class AnomalyService:
         event = await self.get_anomaly(anomaly_id)
         if not event:
             return None
-        update_data = data.model_dump(exclude_unset=True)
-        for key, value in update_data.items():
+        for key, value in data.model_dump(exclude_unset=True).items():
             setattr(event, key, value)
         await self.db.flush()
         return event

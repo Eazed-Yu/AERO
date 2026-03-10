@@ -27,6 +27,7 @@ import { NSpin } from 'naive-ui'
 import EnergyTrendChart from '@/components/charts/EnergyTrendChart.vue'
 import EnergyDistributionChart from '@/components/charts/EnergyDistributionChart.vue'
 import { useBuildingStore } from '@/stores/building'
+import { energyMeterApi } from '@/api/energy_meter'
 import { statisticsApi } from '@/api/statistics'
 import { anomalyApi } from '@/api/anomaly'
 
@@ -40,10 +41,10 @@ interface KpiItem {
 }
 
 const kpis = ref<KpiItem[]>([
-  { label: '总用电量', value: '--', unit: 'kWh' },
-  { label: '总用水量', value: '--', unit: 'm³' },
-  { label: '活跃异常', value: '--', unit: '条' },
-  { label: '平均COP', value: '--', unit: '' },
+  { label: '日用电量', value: '--', unit: 'kWh' },
+  { label: '日用水量', value: '--', unit: 'm\u00B3' },
+  { label: '日COP均值', value: '--', unit: '' },
+  { label: '活跃告警数', value: '--', unit: '条' },
 ])
 
 const trendData = ref<{ timestamp: string; electricity_kwh?: number; hvac_kwh?: number }[]>([])
@@ -64,26 +65,42 @@ function getDateRange(days: number) {
   }
 }
 
+function getTodayRange() {
+  const now = new Date()
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  return {
+    start_time: start.toISOString().slice(0, 19),
+    end_time: now.toISOString().slice(0, 19),
+  }
+}
+
 async function fetchData() {
   const buildingId = buildingStore.current
   if (!buildingId) return
 
   loading.value = true
-  const range = getDateRange(7)
+  const range7d = getDateRange(7)
+  const todayRange = getTodayRange()
 
   try {
-    const [aggRes, copRes, anomalyRes] = await Promise.allSettled([
+    const [meterRes, aggRes, copRes, anomalyRes] = await Promise.allSettled([
+      energyMeterApi.query({
+        building_id: buildingId,
+        start_time: todayRange.start_time,
+        end_time: todayRange.end_time,
+        page_size: 1000,
+      }),
       statisticsApi.aggregate({
         building_id: buildingId,
-        start_time: range.start_time,
-        end_time: range.end_time,
+        start_time: range7d.start_time,
+        end_time: range7d.end_time,
         period: 'day',
-        metrics: 'electricity_kwh,water_m3,hvac_kwh',
+        metrics: 'total_electricity_kwh,hvac_electricity_kwh,water_m3',
       }),
       statisticsApi.cop({
         building_id: buildingId,
-        start_time: range.start_time,
-        end_time: range.end_time,
+        start_time: todayRange.start_time,
+        end_time: todayRange.end_time,
         period: 'day',
       }),
       anomalyApi.list({
@@ -93,32 +110,38 @@ async function fetchData() {
       }),
     ])
 
-    // KPI: total electricity
-    let totalElectricity = 0
-    let totalWater = 0
+    // KPI: today's electricity and water from energy meter data
+    let todayElectricity = 0
+    let todayWater = 0
+    if (meterRes.status === 'fulfilled') {
+      const items = meterRes.value.data.items ?? meterRes.value.data
+      for (const item of (Array.isArray(items) ? items : [])) {
+        todayElectricity += item.total_electricity_kwh ?? 0
+        todayWater += item.water_m3 ?? 0
+      }
+    }
+
+    // Build trend data from 7-day aggregation
     const elecByDay: Record<string, { electricity_kwh: number; hvac_kwh: number }> = {}
+    let totalElec7d = 0
+    let totalHvac7d = 0
 
     if (aggRes.status === 'fulfilled') {
       const aggData = aggRes.value.data
       for (const item of aggData) {
-        if (item.metric_name === 'electricity_kwh') {
-          totalElectricity += item.sum ?? 0
-          const day = item.period_start.slice(0, 10)
-          if (!elecByDay[day]) elecByDay[day] = { electricity_kwh: 0, hvac_kwh: 0 }
+        const day = item.period_start.slice(0, 10)
+        if (!elecByDay[day]) elecByDay[day] = { electricity_kwh: 0, hvac_kwh: 0 }
+        if (item.metric_name === 'total_electricity_kwh') {
           elecByDay[day].electricity_kwh = item.sum ?? 0
+          totalElec7d += item.sum ?? 0
         }
-        if (item.metric_name === 'water_m3') {
-          totalWater += item.sum ?? 0
-        }
-        if (item.metric_name === 'hvac_kwh') {
-          const day = item.period_start.slice(0, 10)
-          if (!elecByDay[day]) elecByDay[day] = { electricity_kwh: 0, hvac_kwh: 0 }
+        if (item.metric_name === 'hvac_electricity_kwh') {
           elecByDay[day].hvac_kwh = item.sum ?? 0
+          totalHvac7d += item.sum ?? 0
         }
       }
     }
 
-    // Build trend data from aggregation
     const sortedDays = Object.keys(elecByDay).sort()
     trendData.value = sortedDays.map((day) => ({
       timestamp: day,
@@ -126,23 +149,21 @@ async function fetchData() {
       hvac_kwh: elecByDay[day].hvac_kwh,
     }))
 
-    // Distribution: electricity vs hvac vs other
-    let totalHvac = 0
+    // Distribution chart
+    const otherElec = Math.max(0, totalElec7d - totalHvac7d)
+    let totalWater7d = 0
     if (aggRes.status === 'fulfilled') {
       for (const item of aggRes.value.data) {
-        if (item.metric_name === 'hvac_kwh') {
-          totalHvac += item.sum ?? 0
-        }
+        if (item.metric_name === 'water_m3') totalWater7d += item.sum ?? 0
       }
     }
-    const otherElec = Math.max(0, totalElectricity - totalHvac)
     distData.value = [
-      { name: 'HVAC', value: Math.round(totalHvac) },
+      { name: 'HVAC', value: Math.round(totalHvac7d) },
       { name: '其他用电', value: Math.round(otherElec) },
-      { name: '用水(m³)', value: Math.round(totalWater) },
+      { name: '用水(m\u00B3)', value: Math.round(totalWater7d) },
     ].filter((d) => d.value > 0)
 
-    // KPI: avg COP
+    // KPI: daily COP average from device-level data
     let avgCop = '--'
     if (copRes.status === 'fulfilled' && copRes.value.data.length > 0) {
       const copVals = copRes.value.data.filter((c) => c.cop != null).map((c) => c.cop!)
@@ -154,14 +175,15 @@ async function fetchData() {
     // KPI: active anomalies
     let anomalyCount = '--'
     if (anomalyRes.status === 'fulfilled') {
-      anomalyCount = String(anomalyRes.value.data.length)
+      const anomalyData = anomalyRes.value.data
+      anomalyCount = String(Array.isArray(anomalyData) ? anomalyData.length : 0)
     }
 
     kpis.value = [
-      { label: '总用电量', value: formatNum(totalElectricity, 0), unit: 'kWh' },
-      { label: '总用水量', value: formatNum(totalWater, 1), unit: 'm³' },
-      { label: '活跃异常', value: anomalyCount, unit: '条' },
-      { label: '平均COP', value: avgCop, unit: '' },
+      { label: '日用电量', value: formatNum(todayElectricity, 0), unit: 'kWh' },
+      { label: '日用水量', value: formatNum(todayWater, 1), unit: 'm\u00B3' },
+      { label: '日COP均值', value: avgCop, unit: '' },
+      { label: '活跃告警数', value: anomalyCount, unit: '条' },
     ]
   } catch {
     // Use mock data on complete failure
@@ -177,13 +199,13 @@ async function fetchData() {
     distData.value = [
       { name: 'HVAC', value: 4200 },
       { name: '其他用电', value: 2800 },
-      { name: '用水(m³)', value: 350 },
+      { name: '用水(m\u00B3)', value: 350 },
     ]
     kpis.value = [
-      { label: '总用电量', value: '7,000', unit: 'kWh' },
-      { label: '总用水量', value: '350', unit: 'm³' },
-      { label: '活跃异常', value: '3', unit: '条' },
-      { label: '平均COP', value: '3.2', unit: '' },
+      { label: '日用电量', value: '7,000', unit: 'kWh' },
+      { label: '日用水量', value: '350', unit: 'm\u00B3' },
+      { label: '日COP均值', value: '3.2', unit: '' },
+      { label: '活跃告警数', value: '3', unit: '条' },
     ]
   } finally {
     loading.value = false

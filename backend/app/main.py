@@ -11,12 +11,14 @@ from app.routers import (
     anomaly,
     buildings,
     data_import,
-    energy,
+    energy_meter,
     equipment,
     export,
+    hvac_data,
     mcp_manage,
     qa,
     statistics,
+    weather,
 )
 from app.services.qa_service import KnowledgeService
 
@@ -62,8 +64,8 @@ async def lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     app = FastAPI(
         title="AERO - 建筑能源智能管理系统",
-        description="Building Energy Intelligent Management System",
-        version="0.1.0",
+        description="Building Energy Intelligent Management System with Full HVAC Chain",
+        version="0.2.0",
         lifespan=lifespan,
     )
 
@@ -81,10 +83,16 @@ def create_app() -> FastAPI:
         buildings.router, prefix="/api/v1/buildings", tags=["buildings"]
     )
     app.include_router(
-        data_import.router, prefix="/api/v1/import", tags=["import"]
+        weather.router, prefix="/api/v1/weather", tags=["weather"]
     )
     app.include_router(
-        energy.router, prefix="/api/v1/energy", tags=["energy"]
+        energy_meter.router, prefix="/api/v1/energy-meters", tags=["energy-meters"]
+    )
+    app.include_router(
+        equipment.router, prefix="/api/v1/equipment", tags=["equipment"]
+    )
+    app.include_router(
+        hvac_data.router, prefix="/api/v1/hvac", tags=["hvac"]
     )
     app.include_router(
         statistics.router, prefix="/api/v1/statistics", tags=["statistics"]
@@ -93,7 +101,7 @@ def create_app() -> FastAPI:
         anomaly.router, prefix="/api/v1/anomaly", tags=["anomaly"]
     )
     app.include_router(
-        equipment.router, prefix="/api/v1/equipment", tags=["equipment"]
+        data_import.router, prefix="/api/v1/import", tags=["import"]
     )
     app.include_router(
         export.router, prefix="/api/v1/export", tags=["export"]
@@ -110,6 +118,7 @@ def create_app() -> FastAPI:
     async def health():
         return {
             "status": "ok",
+            "version": "0.2.0",
             "rag_available": rag_service.is_available,
             "mcp_available": is_mcp_enabled(),
         }

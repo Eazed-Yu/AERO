@@ -1,0 +1,141 @@
+<mxfile host="app.diagrams.net" modified="2026-03-10T00:00:00.000Z" agent="AERO" version="24.0.0" type="device">
+  <diagram name="技术创新点总览" id="innovation-overview">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="AERO系统技术创新点总览" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=18;fontColor=#1a1a2e;" vertex="1" parent="1">
+          <mxGeometry x="350" y="15" width="500" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- 中心系统 -->
+        <mxCell id="center" value="AERO&#xa;建筑能源智能管理&#xa;与运营优化系统" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1A237E;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;fontSize=13;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="350" width="200" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- 创新1: MCP协议 -->
+        <mxCell id="inn1-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;shadow=1;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="350" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="inn1-num" value="创新一" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#2E7D32;fontStyle=1;fontSize=11;fontColor=#FFFFFF;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="90" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="inn1-title" value="MCP协议标准化数据接入" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="115" y="90" width="260" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="inn1-d1" value="- 7个标准化MCP工具接口" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="125" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn1-d2" value="- Streamable HTTP传输" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="145" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn1-d3" value="- 语义化能力声明" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="165" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn1-d4" value="- 支持Claude/Cherry Studio等AI客户端" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="185" width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn1-solve" value="解决痛点：系统间数据孤岛" style="text;html=1;align=center;strokeColor=none;fillColor=#C8E6C9;fontSize=9;fontStyle=2;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="55" y="220" width="200" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- 创新2: LightRAG -->
+        <mxCell id="inn2-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;shadow=1;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="720" y="80" width="350" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="inn2-num" value="创新二" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#E65100;fontStyle=1;fontSize=11;fontColor=#FFFFFF;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="90" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="inn2-title" value="LightRAG知识图谱智慧运维" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="795" y="90" width="260" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="inn2-d1" value="- 领域知识图谱自动构建" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="735" y="125" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn2-d2" value="- 双层检索(Low+High Level)" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="735" y="145" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn2-d3" value="- 4种检索模式(local/global/hybrid/naive)" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="735" y="165" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn2-d4" value="- 增量知识更新，分钟级维护" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="735" y="185" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn2-solve" value="解决痛点：运维知识碎片化" style="text;html=1;align=center;strokeColor=none;fillColor=#FFE0B2;fontSize=9;fontStyle=2;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="735" y="220" width="200" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- 创新3: SAR-AD -->
+        <mxCell id="inn3-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;shadow=1;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="560" width="350" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="inn3-num" value="创新三" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#C62828;fontStyle=1;fontSize=11;fontColor=#FFFFFF;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="570" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="inn3-title" value="结构感知路由异常检测" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="115" y="570" width="260" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="inn3-paper" value="[EAAI 2025, JCR Q1, IF=8]" style="text;html=1;align=center;strokeColor=none;fillColor=#FFCDD2;fontSize=9;fontStyle=2;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="115" y="595" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn3-d1" value="- 传感器依赖结构自适应学习" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="625" width="260" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn3-d2" value="- 路由机制异常传播分析" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="645" width="260" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn3-d3" value="- 多尺度时间特征融合" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="665" width="260" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn3-d4" value="- 阈值检测 + 深度学习双层架构" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="685" width="260" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn3-solve" value="解决痛点：异常检测精度不足" style="text;html=1;align=center;strokeColor=none;fillColor=#FFCDD2;fontSize=9;fontStyle=2;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="55" y="725" width="200" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- 创新4: COP + 统计 -->
+        <mxCell id="inn4-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;shadow=1;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="720" y="560" width="350" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="inn4-num" value="创新四" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=#1565C0;fontStyle=1;fontSize=11;fontColor=#FFFFFF;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="570" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="inn4-title" value="COP智能计算+自动化分析" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="795" y="570" width="260" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="inn4-d1" value="- COP实时计算引擎 + 自动评级" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="735" y="605" width="260" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn4-d2" value="- 多维度时序聚合(时/日/周/月)" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="735" y="625" width="260" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn4-d3" value="- ECharts可视化(折线/饼图/散点图)" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="735" y="645" width="260" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn4-d4" value="- CSV/Excel自动化报表导出" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="735" y="665" width="260" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="inn4-solve" value="解决痛点：分析手动化、效率低" style="text;html=1;align=center;strokeColor=none;fillColor=#BBDEFB;fontSize=9;fontStyle=2;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="735" y="725" width="200" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- 连线 -->
+        <mxCell id="c1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2E7D32;strokeWidth=2;" edge="1" parent="1" source="inn1-bg" target="center">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=2;" edge="1" parent="1" source="inn2-bg" target="center">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#C62828;strokeWidth=2;" edge="1" parent="1" source="inn3-bg" target="center">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1565C0;strokeWidth=2;" edge="1" parent="1" source="inn4-bg" target="center">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
