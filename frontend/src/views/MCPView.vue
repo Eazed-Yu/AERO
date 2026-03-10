@@ -31,21 +31,74 @@
       >
         FastMCP 未安装，MCP 功能不可用。请安装依赖：pip install fastmcp
       </div>
+      <div v-if="status?.mount_error" class="mount-error-box">
+        <div class="mount-error-title">MCP 挂载异常</div>
+        <div class="mount-error-text">{{ status.mount_error }}</div>
+      </div>
     </div>
 
     <!-- 连接信息 -->
     <div class="surface" style="padding: 24px; margin-bottom: 16px">
       <div class="section-title" style="margin-bottom: 12px">连接信息</div>
       <div class="info-row">
-        <span class="info-label">SSE 端点</span>
+        <span class="info-label">MCP 端点</span>
         <code class="info-value">{{ mcpEndpointUrl }}</code>
         <n-button text size="tiny" @click="copyText(mcpEndpointUrl)">复制</n-button>
       </div>
-      <div style="margin-top: 16px">
-        <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px">
-          Claude Desktop 配置（点击复制）
+    </div>
+
+    <!-- 配置指南 -->
+    <div class="surface" style="padding: 24px; margin-bottom: 16px">
+      <div class="section-title" style="margin-bottom: 16px">客户端配置指南</div>
+
+      <!-- Claude Desktop -->
+      <div style="margin-bottom: 24px">
+        <div class="guide-header-row">
+          <div style="font-size: 14px; font-weight: 500">Claude Desktop</div>
+          <n-button
+            size="small"
+            type="primary"
+            :disabled="!canCopyClaudeConfig"
+            @click="copyClaudeConfig"
+          >
+            {{ claudeCopied ? '已复制' : '一键复制 Claude 配置' }}
+          </n-button>
+        </div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px">
+          配置文件位置：
+        </div>
+        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px; padding-left: 12px">
+          • Windows: <code>%APPDATA%\Claude\claude_desktop_config.json</code>
+        </div>
+        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px; padding-left: 12px">
+          • macOS: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>
         </div>
         <pre class="config-block" @click="copyText(claudeConfigJson)">{{ claudeConfigJson }}</pre>
+      </div>
+
+      <!-- Cherry Studio -->
+      <div style="margin-bottom: 24px">
+        <div style="font-size: 14px; font-weight: 500; margin-bottom: 12px">
+          Cherry Studio
+        </div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px">
+          在设置 → MCP 服务器中添加：
+        </div>
+        <pre class="config-block" @click="copyText(cherryConfigJson)">{{ cherryConfigJson }}</pre>
+      </div>
+
+      <!-- 通用 HTTP 客户端 -->
+      <div>
+        <div style="font-size: 14px; font-weight: 500; margin-bottom: 12px">
+          其他 MCP 客户端（HTTP）
+        </div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px">
+          直接使用 HTTP 端点：
+        </div>
+        <div class="info-row">
+          <code class="info-value">{{ mcpEndpointUrl }}</code>
+          <n-button text size="tiny" @click="copyText(mcpEndpointUrl)">复制</n-button>
+        </div>
       </div>
     </div>
 
@@ -76,18 +129,36 @@ import { mcpApi, type MCPStatus } from '@/api/mcp'
 const message = useMessage()
 const status = ref<MCPStatus | null>(null)
 const toggling = ref(false)
+const claudeCopied = ref(false)
+
+const canCopyClaudeConfig = computed(() => {
+  return Boolean(status.value?.available && !status.value?.mount_error)
+})
 
 const mcpEndpointUrl = computed(() => {
   const origin = window.location.origin
-  return `${origin}/mcp`
+  return `${origin}/mcp/`
 })
 
 const claudeConfigJson = computed(() => {
+  const port = window.location.port || '8000'
   return JSON.stringify(
     {
       mcpServers: {
-        aero: {
-          url: mcpEndpointUrl.value,
+        'aero-energy': {
+          command: 'npx',
+          args: ['-y', 'mcp-remote', `http://localhost:${port}/mcp/`],
+          env: {},
+          disabled: false,
+          autoApprove: [
+            'health_check',
+            'get_capabilities',
+            'query_energy_data',
+            'export_energy_report',
+            'calculate_cop',
+            'detect_anomalies',
+            'get_building_statistics',
+          ]
         },
       },
     },
@@ -154,12 +225,40 @@ async function handleToggle(enabled: boolean) {
   }
 }
 
+function copyClaudeConfig() {
+  if (!canCopyClaudeConfig.value) {
+    message.warning('MCP 挂载异常或不可用，暂不可复制')
+    return
+  }
+  copyText(claudeConfigJson.value)
+  claudeCopied.value = true
+  setTimeout(() => {
+    claudeCopied.value = false
+  }, 1600)
+}
+
 function copyText(text: string) {
   navigator.clipboard.writeText(text).then(
     () => message.success('已复制到剪贴板'),
     () => message.error('复制失败'),
   )
 }
+
+const cherryConfigJson = computed(() => {
+  const port = window.location.port || '8000'
+  return JSON.stringify(
+    {
+      mcpServers: {
+        'aero-energy': {
+          type: 'streamableHttp',
+          url: `http://localhost:${port}/mcp/`,
+        },
+      },
+    },
+    null,
+    2,
+  )
+})
 
 onMounted(fetchStatus)
 </script>
@@ -216,5 +315,33 @@ onMounted(fetchStatus)
 
 .config-block:hover {
   background: var(--border-light, #e8e8e8);
+}
+
+.mount-error-box {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #f3b8ad;
+  background: #fff3f0;
+}
+
+.mount-error-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c0392b;
+  margin-bottom: 4px;
+}
+
+.mount-error-text {
+  font-size: 12px;
+  color: #a84232;
+  word-break: break-word;
+}
+
+.guide-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 </style>

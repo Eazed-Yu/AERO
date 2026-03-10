@@ -35,6 +35,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { NLayoutSider, NMenu, type MenuOption } from 'naive-ui'
 import {
   GridOutline,
+  BusinessOutline,
   FlashOutline,
   StatsChartOutline,
   WarningOutline,
@@ -57,6 +58,7 @@ function renderIcon(icon: any) {
 
 const menuOptions: MenuOption[] = [
   { label: '总览', key: '/dashboard', icon: renderIcon(GridOutline) },
+  { label: '建筑管理', key: '/buildings', icon: renderIcon(BusinessOutline) },
   { label: '能耗查询', key: '/energy', icon: renderIcon(FlashOutline) },
   { label: '统计分析', key: '/statistics', icon: renderIcon(StatsChartOutline) },
   { label: '异常检测', key: '/anomaly', icon: renderIcon(WarningOutline) },

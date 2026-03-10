@@ -20,6 +20,7 @@ dependencies = [
     "psycopg2-binary>=2.9.0",
     "ollama>=0.6.1",
     "pyjwt>=2.11.0",
+    "fastmcp>=2.12.2",
 ]
 
 [project.optional-dependencies]

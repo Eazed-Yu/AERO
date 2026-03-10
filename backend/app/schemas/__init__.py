@@ -1,9 +1,15 @@
-from .anomaly import AnomalyDetectRequest, AnomalyEventCreate, AnomalyEventResponse
+from .anomaly import (
+    AnomalyDetectRequest,
+    AnomalyEventCreate,
+    AnomalyEventResponse,
+    AnomalyEventUpdate,
+)
 from .building import BuildingCreate, BuildingResponse, BuildingUpdate
 from .energy import (
     EnergyImportRequest,
     EnergyRecordCreate,
     EnergyRecordResponse,
+    EnergyRecordUpdate,
     ImportResult,
 )
 from .equipment import (
@@ -11,6 +17,8 @@ from .equipment import (
     EquipmentResponse,
     EquipmentStatusCreate,
     EquipmentStatusResponse,
+    EquipmentStatusUpdate,
+    EquipmentUpdate,
 )
 from .query import EnergyQueryParams, PaginatedResponse
 from .report import ExportRequest, QAIngestRequest, QAQueryRequest, QAQueryResponse
@@ -22,14 +30,18 @@ __all__ = [
     "BuildingResponse",
     "EnergyRecordCreate",
     "EnergyRecordResponse",
+    "EnergyRecordUpdate",
     "EnergyImportRequest",
     "ImportResult",
     "EquipmentCreate",
     "EquipmentResponse",
     "EquipmentStatusCreate",
     "EquipmentStatusResponse",
+    "EquipmentUpdate",
+    "EquipmentStatusUpdate",
     "AnomalyEventCreate",
     "AnomalyEventResponse",
+    "AnomalyEventUpdate",
     "AnomalyDetectRequest",
     "AggregationResult",
     "COPResult",

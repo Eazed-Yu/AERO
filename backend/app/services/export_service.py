@@ -29,6 +29,10 @@ class ExportService:
         columns: list[str],
         sheet_name: str = "Sheet1",
         filename: str = "export.xlsx",
+        summary_rows: list[dict] | None = None,
+        summary_columns: list[str] | None = None,
+        building_rows: list[dict] | None = None,
+        building_columns: list[str] | None = None,
     ) -> StreamingResponse:
         wb = Workbook()
         ws = wb.active
@@ -45,6 +49,22 @@ class ExportService:
                 if isinstance(value, datetime):
                     value = value.isoformat()
                 ws.cell(row=row_idx, column=col_idx, value=value)
+
+        if summary_rows and summary_columns:
+            ws_summary = wb.create_sheet(title="统计汇总")
+            for col_idx, col_name in enumerate(summary_columns, 1):
+                ws_summary.cell(row=1, column=col_idx, value=col_name)
+            for row_idx, row_data in enumerate(summary_rows, 2):
+                for col_idx, col_name in enumerate(summary_columns, 1):
+                    ws_summary.cell(row=row_idx, column=col_idx, value=row_data.get(col_name, ""))
+
+        if building_rows and building_columns:
+            ws_building = wb.create_sheet(title="分建筑统计")
+            for col_idx, col_name in enumerate(building_columns, 1):
+                ws_building.cell(row=1, column=col_idx, value=col_name)
+            for row_idx, row_data in enumerate(building_rows, 2):
+                for col_idx, col_name in enumerate(building_columns, 1):
+                    ws_building.cell(row=row_idx, column=col_idx, value=row_data.get(col_name, ""))
 
         output = io.BytesIO()
         wb.save(output)

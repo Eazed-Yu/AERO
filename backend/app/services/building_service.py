@@ -39,3 +39,11 @@ class BuildingService:
             setattr(building, key, value)
         await self.db.flush()
         return building
+
+    async def delete_building(self, building_id: str) -> bool:
+        building = await self.get_building(building_id)
+        if not building:
+            return False
+        await self.db.delete(building)
+        await self.db.flush()
+        return True

@@ -22,6 +22,21 @@ class EnergyRecordCreate(EnergyRecordBase):
     pass
 
 
+class EnergyRecordUpdate(BaseModel):
+    building_id: str | None = Field(None, max_length=64)
+    timestamp: datetime | None = None
+    electricity_kwh: float | None = Field(None, ge=0)
+    water_m3: float | None = Field(None, ge=0)
+    gas_m3: float | None = Field(None, ge=0)
+    hvac_kwh: float | None = Field(None, ge=0)
+    hvac_supply_temp: float | None = None
+    hvac_return_temp: float | None = None
+    hvac_flow_rate: float | None = Field(None, ge=0)
+    outdoor_temp: float | None = None
+    outdoor_humidity: float | None = None
+    occupancy_density: float | None = Field(None, ge=0)
+
+
 class EnergyRecordResponse(EnergyRecordBase):
     id: int
     created_at: datetime

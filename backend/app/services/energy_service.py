@@ -4,6 +4,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import EnergyRecord
+from app.schemas.energy import EnergyRecordCreate, EnergyRecordUpdate
 from app.schemas.query import EnergyQueryParams, PaginatedResponse
 
 
@@ -76,3 +77,34 @@ class EnergyService:
         )
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
+
+    async def get_record(self, record_id: int) -> EnergyRecord | None:
+        stmt = select(EnergyRecord).where(EnergyRecord.id == record_id)
+        result = await self.db.execute(stmt)
+        return result.scalar_one_or_none()
+
+    async def create_record(self, data: EnergyRecordCreate) -> EnergyRecord:
+        record = EnergyRecord(**data.model_dump())
+        self.db.add(record)
+        await self.db.flush()
+        return record
+
+    async def update_record(
+        self, record_id: int, data: EnergyRecordUpdate
+    ) -> EnergyRecord | None:
+        record = await self.get_record(record_id)
+        if not record:
+            return None
+        update_data = data.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(record, key, value)
+        await self.db.flush()
+        return record
+
+    async def delete_record(self, record_id: int) -> bool:
+        record = await self.get_record(record_id)
+        if not record:
+            return False
+        await self.db.delete(record)
+        await self.db.flush()
+        return True

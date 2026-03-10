@@ -1,0 +1,102 @@
+<mxfile host="app.diagrams.net" modified="2026-03-10T00:00:00.000Z" agent="AERO" version="24.0.0" type="device">
+  <diagram name="行业痛点分析" id="pain-points">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="建筑能源管理行业痛点与解决方案对照" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=16;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="340" y="15" width="340" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- 左侧痛点 -->
+        <mxCell id="pain-header" value="行业痛点" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontStyle=1;fontSize=14;fontColor=#C62828;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="60" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1" value="痛点一：数据分散、格式不统一&#xa;能耗数据来源多、采集标准不一，查询&#xa;统计效率低下，难以快速支撑决策" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#EF9A9A;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="痛点二：运维依赖人工经验&#xa;故障诊断响应慢、知识传承难，缺乏&#xa;智能化辅助分析手段" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#EF9A9A;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="210" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="痛点三：异常检测滞后&#xa;依赖人工巡检发现异常，响应滞后，&#xa;缺乏时间序列智能分析能力" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#EF9A9A;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="痛点四：缺乏 AI 工具链集成&#xa;传统系统封闭，无法与 AI Agent 对接&#xa;数据孤岛无法被大模型利用" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#EF9A9A;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="390" width="260" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- 右侧方案 -->
+        <mxCell id="sol-header" value="AERO 解决方案" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=1;fontSize=14;fontColor=#2E7D32;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="60" width="220" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s1" value="方案一：统一数据层 + 标准化接口&#xa;构建结构化能耗数据集，Pydantic Schema&#xa;强校验，RESTful API 多条件精准查询" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#A5D6A7;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="820" y="120" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="方案二：LightRAG 知识图谱 + LLM 问答&#xa;构建领域知识库，知识图谱增强检索，&#xa;LLM 生成专业运维回答" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#A5D6A7;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="820" y="210" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="方案三：双策略异常检测引擎&#xa;阈值规则检测 + 时间序列深度学习模型&#xa;多维度异常识别与根因定位" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#A5D6A7;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="820" y="300" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" value="方案四：MCP 协议标准接入&#xa;基于 FastMCP 暴露 4 个工具，Claude&#xa;Desktop 等 AI 客户端可直接调用系统能力" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#A5D6A7;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="820" y="390" width="280" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- 中间箭头 -->
+        <mxCell id="arr1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F9A825;strokeWidth=3;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="p1" target="s1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F9A825;strokeWidth=3;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="p2" target="s2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F9A825;strokeWidth=3;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="p3" target="s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F9A825;strokeWidth=3;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="p4" target="s4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 中间标签 -->
+        <mxCell id="mid-label1" value="AERO" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#F9A825;" vertex="1" parent="1">
+          <mxGeometry x="530" y="135" width="55" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="mid-label2" value="解决" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#F9A825;" vertex="1" parent="1">
+          <mxGeometry x="530" y="155" width="55" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- 底部技术支撑 -->
+        <mxCell id="tech-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;dashed=1;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="500" width="1060" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tech-label" value="核心技术支撑" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=12;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="55" y="508" width="100" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="tech1" value="FastAPI&#xa;异步后端" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="545" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tech2" value="Vue 3&#xa;前端框架" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="545" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tech3" value="PostgreSQL&#xa;关系数据库" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="545" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tech4" value="LightRAG&#xa;知识图谱RAG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="545" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tech5" value="FastMCP&#xa;MCP协议" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="545" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tech6" value="ECharts&#xa;数据可视化" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="545" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tech7" value="时间序列模型&#xa;异常检测" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="545" width="110" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

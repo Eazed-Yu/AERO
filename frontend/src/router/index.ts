@@ -10,6 +10,11 @@ const router = createRouter({
       meta: { title: '总览' }
     },
     {
+      path: '/buildings',
+      component: () => import('@/views/BuildingManageView.vue'),
+      meta: { title: '建筑管理' }
+    },
+    {
       path: '/energy',
       component: () => import('@/views/EnergyQueryView.vue'),
       meta: { title: '能耗查询' }

@@ -5,6 +5,7 @@ Usage: uv run python -m scripts.generate_data --days 7 --anomaly-rate 0.04
 
 import argparse
 import csv
+import json
 import math
 import random
 from datetime import datetime, timedelta
@@ -104,6 +105,22 @@ ELECTRICITY_BASELINES = {
     "hospital": 15.0,
     "school": 6.0,
 }
+
+# Canonical energy import columns expected by backend import endpoints.
+ENERGY_IMPORT_FIELDS = [
+    "building_id",
+    "timestamp",
+    "electricity_kwh",
+    "water_m3",
+    "gas_m3",
+    "hvac_kwh",
+    "hvac_supply_temp",
+    "hvac_return_temp",
+    "hvac_flow_rate",
+    "outdoor_temp",
+    "outdoor_humidity",
+    "occupancy_density",
+]
 
 
 def _hour_factor(hour: int, btype: str) -> float:
@@ -362,6 +379,22 @@ def _save_csv(filepath: Path, records: list[dict]):
         writer.writerows(records)
 
 
+def _save_csv_with_fields(filepath: Path, records: list[dict], fieldnames: list[str]):
+    if not records:
+        return
+
+    with open(filepath, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for rec in records:
+            writer.writerow({key: rec.get(key) for key in fieldnames})
+
+
+def _save_json(filepath: Path, payload: dict):
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate synthetic building energy CSV files for manual import."
@@ -401,6 +434,30 @@ def main():
         filepath = data_dir / f"{key}.csv"
         _save_csv(filepath, records)
         print(f"  Saved {filepath}")
+
+    # Single-file bundle for one-shot sharing/import workflows.
+    bundle_json = data_dir / "dataset_bundle.json"
+    _save_json(bundle_json, data)
+    print(f"  Saved {bundle_json} (single-file bundle)")
+
+    # Import-ready files for the two import endpoints:
+    # 1) /api/v1/import/upload: CSV with canonical header order.
+    upload_csv = data_dir / "energy_records_import.csv"
+    _save_csv_with_fields(upload_csv, data["energy_records"], ENERGY_IMPORT_FIELDS)
+    print(f"  Saved {upload_csv} (for POST /api/v1/import/upload)")
+
+    # 2) /api/v1/import/energy: JSON request body with records list.
+    import_payload = {
+        "records": [
+            {field: rec.get(field) for field in ENERGY_IMPORT_FIELDS}
+            for rec in data["energy_records"]
+        ],
+        "validate": True,
+        "on_conflict": "skip",
+    }
+    import_json = data_dir / "energy_import_request.json"
+    _save_json(import_json, import_payload)
+    print(f"  Saved {import_json} (for POST /api/v1/import/energy)")
 
     print("Done. You can manually import these CSV files into database tables.")
 

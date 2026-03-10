@@ -20,6 +20,20 @@ class AnomalyEventCreate(AnomalyEventBase):
     pass
 
 
+class AnomalyEventUpdate(BaseModel):
+    building_id: str | None = Field(None, max_length=64)
+    device_id: str | None = None
+    timestamp: datetime | None = None
+    anomaly_type: str | None = Field(None, max_length=64)
+    severity: str | None = Field(None, pattern="^(low|medium|high|critical)$")
+    metric_name: str | None = Field(None, max_length=64)
+    metric_value: float | None = None
+    threshold_value: float | None = None
+    description: str | None = None
+    detection_method: str | None = None
+    resolved: bool | None = None
+
+
 class AnomalyEventResponse(AnomalyEventBase):
     id: str
     resolved: bool

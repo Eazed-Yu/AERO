@@ -18,6 +18,7 @@
         style="width: 160px"
       />
       <n-button size="small" type="primary" @click="fetchEquipment">查询</n-button>
+      <n-button size="small" @click="openCreate">新增设备</n-button>
     </div>
 
     <div class="surface" style="padding: 0">
@@ -30,6 +31,34 @@
         :bordered="false"
       />
     </div>
+
+    <n-modal v-model:show="showModal" preset="card" :title="modalTitle" style="width: 700px">
+      <n-form ref="formRef" :model="form" :rules="rules" label-placement="left" label-width="110">
+        <n-grid :cols="2" :x-gap="12">
+          <n-form-item-gi label="建筑ID" path="building_id">
+            <n-input v-model:value="form.building_id" />
+          </n-form-item-gi>
+          <n-form-item-gi label="设备ID" path="device_id">
+            <n-input v-model:value="form.device_id" :disabled="mode === 'edit'" />
+          </n-form-item-gi>
+          <n-form-item-gi label="设备名称" path="device_name">
+            <n-input v-model:value="form.device_name" />
+          </n-form-item-gi>
+          <n-form-item-gi label="设备类型" path="device_type">
+            <n-input v-model:value="form.device_type" />
+          </n-form-item-gi>
+          <n-form-item-gi label="额定功率(kW)">
+            <n-input-number v-model:value="form.rated_power_kw" :min="0" style="width: 100%" />
+          </n-form-item-gi>
+        </n-grid>
+      </n-form>
+      <template #footer>
+        <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <n-button @click="showModal = false">取消</n-button>
+          <n-button type="primary" :loading="saving" @click="submit">保存</n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
@@ -40,15 +69,48 @@ import {
   NButton,
   NDataTable,
   NTag,
+  NModal,
+  NForm,
+  NFormItemGi,
+  NGrid,
+  NInput,
+  NInputNumber,
+  useMessage,
+  useDialog,
   type DataTableColumn,
+  type FormInst,
+  type FormRules,
 } from 'naive-ui'
 import { useBuildingStore } from '@/stores/building'
 import { equipmentApi } from '@/api/equipment'
 import type { Equipment } from '@/types/equipment'
 
 const buildingStore = useBuildingStore()
+const message = useMessage()
+const dialog = useDialog()
 const loading = ref(false)
 const equipment = ref<Equipment[]>([])
+const saving = ref(false)
+
+const showModal = ref(false)
+const mode = ref<'create' | 'edit'>('create')
+const formRef = ref<FormInst | null>(null)
+const form = ref({
+  building_id: '',
+  device_id: '',
+  device_name: '',
+  device_type: '',
+  rated_power_kw: null as number | null,
+})
+
+const modalTitle = computed(() => (mode.value === 'create' ? '新增设备' : '编辑设备'))
+
+const rules: FormRules = {
+  building_id: [{ required: true, message: '请输入建筑ID', trigger: ['blur', 'input'] }],
+  device_id: [{ required: true, message: '请输入设备ID', trigger: ['blur', 'input'] }],
+  device_name: [{ required: true, message: '请输入设备名称', trigger: ['blur', 'input'] }],
+  device_type: [{ required: true, message: '请输入设备类型', trigger: ['blur', 'input'] }],
+}
 
 const buildingFilter = ref<string | null>(buildingStore.current || null)
 const typeFilter = ref<string | null>(null)
@@ -106,7 +168,54 @@ const columns: DataTableColumn<Equipment>[] = [
       return row.updated_at?.replace('T', ' ').slice(0, 19) ?? ''
     },
   },
+  {
+    title: '操作',
+    key: 'actions',
+    width: 150,
+    render(row) {
+      return h('div', { style: 'display:flex;gap:8px;' }, [
+        h(
+          NButton,
+          { size: 'tiny', onClick: () => openEdit(row) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NButton,
+          { size: 'tiny', type: 'error', ghost: true, onClick: () => remove(row) },
+          { default: () => '删除' }
+        ),
+      ])
+    },
+  },
 ]
+
+function resetForm() {
+  form.value = {
+    building_id: buildingStore.current || '',
+    device_id: '',
+    device_name: '',
+    device_type: '',
+    rated_power_kw: null,
+  }
+}
+
+function openCreate() {
+  mode.value = 'create'
+  resetForm()
+  showModal.value = true
+}
+
+function openEdit(row: Equipment) {
+  mode.value = 'edit'
+  form.value = {
+    building_id: row.building_id,
+    device_id: row.device_id,
+    device_name: row.device_name,
+    device_type: row.device_type,
+    rated_power_kw: row.rated_power_kw ?? null,
+  }
+  showModal.value = true
+}
 
 async function fetchEquipment() {
   loading.value = true
@@ -122,6 +231,55 @@ async function fetchEquipment() {
   } finally {
     loading.value = false
   }
+}
+
+async function submit() {
+  await formRef.value?.validate()
+  saving.value = true
+  try {
+    if (mode.value === 'create') {
+      await equipmentApi.create({
+        building_id: form.value.building_id,
+        device_id: form.value.device_id,
+        device_name: form.value.device_name,
+        device_type: form.value.device_type,
+        rated_power_kw: form.value.rated_power_kw ?? undefined,
+      })
+      message.success('新增成功')
+    } else {
+      await equipmentApi.update(form.value.device_id, {
+        building_id: form.value.building_id,
+        device_name: form.value.device_name,
+        device_type: form.value.device_type,
+        rated_power_kw: form.value.rated_power_kw ?? undefined,
+      })
+      message.success('更新成功')
+    }
+    showModal.value = false
+    await fetchEquipment()
+  } catch {
+    message.error('保存失败')
+  } finally {
+    saving.value = false
+  }
+}
+
+function remove(row: Equipment) {
+  dialog.warning({
+    title: '确认删除',
+    content: `确定删除设备 ${row.device_id} 吗？`,
+    positiveText: '删除',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      try {
+        await equipmentApi.remove(row.device_id)
+        message.success('删除成功')
+        await fetchEquipment()
+      } catch {
+        message.error('删除失败')
+      }
+    },
+  })
 }
 
 onMounted(() => {

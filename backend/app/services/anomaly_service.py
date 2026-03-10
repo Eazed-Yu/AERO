@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.detection.base import AbstractDetector, DetectionContext
 from app.detection.threshold import ThresholdDetector
 from app.models import AnomalyEvent, EnergyRecord
-from app.schemas.anomaly import AnomalyEventResponse
+from app.schemas.anomaly import AnomalyEventCreate, AnomalyEventUpdate
 
 
 class AnomalyService:
@@ -92,3 +92,34 @@ class AnomalyService:
         )
         result = await self.db.execute(stmt)
         return result.rowcount > 0
+
+    async def get_anomaly(self, anomaly_id: str) -> AnomalyEvent | None:
+        stmt = select(AnomalyEvent).where(AnomalyEvent.id == anomaly_id)
+        result = await self.db.execute(stmt)
+        return result.scalar_one_or_none()
+
+    async def create_anomaly(self, data: AnomalyEventCreate) -> AnomalyEvent:
+        event = AnomalyEvent(**data.model_dump())
+        self.db.add(event)
+        await self.db.flush()
+        return event
+
+    async def update_anomaly(
+        self, anomaly_id: str, data: AnomalyEventUpdate
+    ) -> AnomalyEvent | None:
+        event = await self.get_anomaly(anomaly_id)
+        if not event:
+            return None
+        update_data = data.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(event, key, value)
+        await self.db.flush()
+        return event
+
+    async def delete_anomaly(self, anomaly_id: str) -> bool:
+        event = await self.get_anomaly(anomaly_id)
+        if not event:
+            return False
+        await self.db.delete(event)
+        await self.db.flush()
+        return True

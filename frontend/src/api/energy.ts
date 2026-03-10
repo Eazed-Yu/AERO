@@ -16,4 +16,9 @@ export interface EnergyQueryParams {
 export const energyApi = {
   query: (params: EnergyQueryParams) =>
     api.get<PaginatedResponse<EnergyRecord>>('/energy', { params }),
+  get: (id: number) => api.get<EnergyRecord>(`/energy/${id}`),
+  create: (data: Partial<EnergyRecord>) => api.post<EnergyRecord>('/energy', data),
+  update: (id: number, data: Partial<EnergyRecord>) =>
+    api.put<EnergyRecord>(`/energy/${id}`, data),
+  remove: (id: number) => api.delete(`/energy/${id}`),
 }

@@ -1,14 +1,21 @@
 <template>
   <n-config-provider :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN">
     <n-message-provider>
-      <AppLayout />
+      <n-dialog-provider>
+        <AppLayout />
+      </n-dialog-provider>
     </n-message-provider>
   </n-config-provider>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { NConfigProvider, NMessageProvider, type GlobalThemeOverrides } from 'naive-ui'
+import {
+  NConfigProvider,
+  NDialogProvider,
+  NMessageProvider,
+  type GlobalThemeOverrides,
+} from 'naive-ui'
 import { zhCN, dateZhCN } from 'naive-ui'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useBuildingStore } from '@/stores/building'

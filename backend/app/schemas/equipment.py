@@ -16,6 +16,14 @@ class EquipmentCreate(EquipmentBase):
     pass
 
 
+class EquipmentUpdate(BaseModel):
+    building_id: str | None = Field(None, max_length=64)
+    device_name: str | None = Field(None, max_length=255)
+    device_type: str | None = Field(None, max_length=64)
+    rated_power_kw: float | None = None
+    install_date: datetime | None = None
+
+
 class EquipmentResponse(EquipmentBase):
     id: str
     created_at: datetime
@@ -36,6 +44,18 @@ class EquipmentStatusBase(BaseModel):
 
 class EquipmentStatusCreate(EquipmentStatusBase):
     pass
+
+
+class EquipmentStatusUpdate(BaseModel):
+    timestamp: datetime | None = None
+    status: str | None = Field(
+        None,
+        pattern="^(normal|abnormal|offline|maintenance)$",
+    )
+    power_consumption_kw: float | None = None
+    runtime_hours: float | None = None
+    error_code: str | None = None
+    notes: str | None = None
 
 
 class EquipmentStatusResponse(EquipmentStatusBase):

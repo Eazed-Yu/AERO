@@ -1,0 +1,133 @@
+<mxfile host="app.diagrams.net" modified="2026-03-10T00:00:00.000Z" agent="AERO" version="24.0.0" type="device">
+  <diagram name="RAG智能问答流程" id="rag-qa-flow">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="基于 LightRAG 知识图谱的智能问答流程" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=16;fontColor=#4527A0;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="320" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Step 1: 知识库构建（离线） -->
+        <mxCell id="offline-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;dashed=1;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="1320" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="offline-label" value="离线阶段：知识库构建" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="55" y="78" width="170" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="docs" value="领域知识文档&#xa;&#xa;· 能耗数据字典&#xa;· 设备运维手册&#xa;· HVAC 操作规范&#xa;· 行业标准文件" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=0.15;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="70" y="115" width="170" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="chunk" value="文档分块&#xa;&#xa;DocumentProcessor&#xa;自动分割文本块" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="310" y="130" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="embed" value="向量嵌入&#xa;&#xa;BAAI/bge-m3&#xa;1024 维向量" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="130" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="kg-build" value="知识图谱构建&#xa;&#xa;LLM 抽取实体与关系&#xa;NetworkX 构建图结构" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="750" y="130" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="storage" value="知识存储&#xa;&#xa;NanoVectorDB（向量索引）&#xa;JsonKV（键值缓存）&#xa;NetworkX Graph（图谱）" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="110" width="200" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-doc-chunk" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=2;" edge="1" parent="1" source="docs" target="chunk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-chunk-embed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;" edge="1" parent="1" source="chunk" target="embed">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-embed-kg" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4CAF50;strokeWidth=2;" edge="1" parent="1" source="embed" target="kg-build">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-kg-store" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="kg-build" target="storage">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Step 2: 在线检索（4 种模式） -->
+        <mxCell id="online-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#4527A0;dashed=1;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="1320" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="online-label" value="在线阶段：检索增强生成（RAG）" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#4527A0;" vertex="1" parent="1">
+          <mxGeometry x="55" y="288" width="250" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="user-q" value="用户提问&#xa;&#xa;「BLD-001 上周&#xa;  电力异常原因？」" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D1C4E9;strokeColor=#4527A0;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="340" width="170" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mode-select" value="检索模式选择" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="340" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mode-local" value="local 模式&#xa;局部实体/关系检索" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="530" y="310" width="150" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="mode-global" value="global 模式&#xa;全局知识图谱检索" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="530" y="370" width="150" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="mode-hybrid" value="hybrid 模式（推荐）&#xa;混合检索" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="530" y="430" width="150" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="mode-naive" value="naive 模式&#xa;朴素向量检索" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="530" y="490" width="150" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="retrieve" value="知识检索&#xa;&#xa;向量相似度匹配&#xa;+&#xa;图谱关系遍历&#xa;&#xa;返回相关文档片段" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="760" y="340" width="170" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="llm-gen" value="LLM 生成回答&#xa;&#xa;Qwen2.5-7B-Instruct&#xa;（via SiliconFlow API）&#xa;&#xa;基于检索上下文&#xa;生成专业回答" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="330" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="answer" value="回答输出&#xa;&#xa;QAQueryResponse&#xa;{ answer, mode, sources }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#4CAF50;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="490" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-q-mode" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4527A0;strokeWidth=2;" edge="1" parent="1" source="user-q" target="mode-select">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-m-local" style="rounded=1;strokeColor=#4CAF50;strokeWidth=1;" edge="1" parent="1" source="mode-select" target="mode-local">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-m-global" style="rounded=1;strokeColor=#4CAF50;strokeWidth=1;" edge="1" parent="1" source="mode-select" target="mode-global">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-m-hybrid" style="rounded=1;strokeColor=#2E7D32;strokeWidth=2;" edge="1" parent="1" source="mode-select" target="mode-hybrid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-m-naive" style="rounded=1;strokeColor=#4CAF50;strokeWidth=1;" edge="1" parent="1" source="mode-select" target="mode-naive">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-modes-ret" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;" edge="1" parent="1" source="mode-hybrid" target="retrieve">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-ret-llm" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=2;" edge="1" parent="1" source="retrieve" target="llm-gen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-llm-ans" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4CAF50;strokeWidth=2;" edge="1" parent="1" source="llm-gen" target="answer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 知识库连接 -->
+        <mxCell id="a-store-ret" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;dashed=1;" edge="1" parent="1" source="storage" target="retrieve">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1120" y="260" />
+              <mxPoint x="845" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 底部说明 -->
+        <mxCell id="note" value="LightRAG 特点：相比传统 RAG，LightRAG 通过知识图谱增强检索，支持实体关系推理，能更好地回答需要跨文档推理的复合问题。&#xa;hybrid 模式同时利用局部实体匹配和全局主题发现，在建筑能源运维场景中效果最优。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=10;fontStyle=2;align=left;spacingLeft=10;spacingRight=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="630" width="1320" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

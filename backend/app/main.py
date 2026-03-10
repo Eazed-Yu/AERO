@@ -1,12 +1,12 @@
 import logging
-from contextlib import asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.lightrag_launcher import start_lightrag_server, stop_lightrag_server
 from app.rag.rag_service import LightRAGService
-from app.mcp.server import is_mcp_enabled, mount_mcp
+from app.mcp.server import get_mcp_lifespan_context, is_mcp_enabled, mount_mcp
 from app.routers import (
     anomaly,
     buildings,
@@ -27,30 +27,36 @@ rag_service = LightRAGService()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
-    logger.info("Starting AERO application...")
+    async with AsyncExitStack() as stack:
+        # Startup
+        logger.info("Starting AERO application...")
 
-    # Start LightRAG Web UI Server
-    await start_lightrag_server()
+        # Initialize FastMCP mounted app lifespan if present.
+        mcp_lifespan = get_mcp_lifespan_context()
+        if mcp_lifespan is not None:
+            await stack.enter_async_context(mcp_lifespan(app))
 
-    # Initialize LightRAG
-    try:
-        await rag_service.initialize()
-        if rag_service.is_available:
-            knowledge_svc = KnowledgeService(rag_service)
-            qa.set_knowledge_service(knowledge_svc)
-            logger.info("LightRAG initialized successfully")
-        else:
-            logger.warning("LightRAG not available. Knowledge features disabled.")
-    except Exception as e:
-        logger.warning(f"LightRAG initialization failed: {e}")
+        # Start LightRAG Web UI Server
+        await start_lightrag_server()
 
-    yield
+        # Initialize LightRAG
+        try:
+            await rag_service.initialize()
+            if rag_service.is_available:
+                knowledge_svc = KnowledgeService(rag_service)
+                qa.set_knowledge_service(knowledge_svc)
+                logger.info("LightRAG initialized successfully")
+            else:
+                logger.warning("LightRAG not available. Knowledge features disabled.")
+        except Exception as e:
+            logger.warning(f"LightRAG initialization failed: {e}")
 
-    # Shutdown
-    logger.info("Shutting down AERO application...")
-    await stop_lightrag_server()
-    await rag_service.shutdown()
+        yield
+
+        # Shutdown
+        logger.info("Shutting down AERO application...")
+        await stop_lightrag_server()
+        await rag_service.shutdown()
 
 
 def create_app() -> FastAPI:

@@ -49,3 +49,15 @@ async def update_building(
     if not building:
         raise HTTPException(status_code=404, detail="Building not found")
     return building
+
+
+@router.delete("/{building_id}")
+async def delete_building(
+    building_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    svc = BuildingService(db)
+    success = await svc.delete_building(building_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Building not found")
+    return {"status": "deleted"}

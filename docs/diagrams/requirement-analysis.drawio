@@ -1,0 +1,131 @@
+<mxfile host="app.diagrams.net" modified="2026-03-10T00:00:00.000Z" agent="AERO" version="24.0.0" type="device">
+  <diagram name="需求分析" id="requirement-analysis">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- 中心主题 -->
+        <mxCell id="center" value="建筑能源智能管理系统&#xa;核心需求" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976D2;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;fontSize=14;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="530" y="350" width="240" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- 分支1: 数据层需求 -->
+        <mxCell id="branch1" value="数据层需求" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;fontStyle=1;fontSize=13;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b1-1" value="能耗数据集构建&#xa;（多建筑、多维度指标）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#90CAF9;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="160" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b1-2" value="数据清洗与标准化&#xa;（Pydantic Schema 校验）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#90CAF9;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="190" y="160" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b1-3" value="数据导入接口&#xa;（CSV/JSON 文件上传）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#90CAF9;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="230" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a-c-b1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="center" target="branch1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b1-1" style="rounded=1;strokeColor=#90CAF9;" edge="1" parent="1" source="branch1" target="b1-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b1-2" style="rounded=1;strokeColor=#90CAF9;" edge="1" parent="1" source="branch1" target="b1-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b1-3" style="rounded=1;strokeColor=#90CAF9;" edge="1" parent="1" source="branch1" target="b1-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 分支2: 查询统计需求 -->
+        <mxCell id="branch2" value="查询统计需求" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;fontStyle=1;fontSize=13;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="80" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b2-1" value="多条件精准查询&#xa;（建筑/时间/参数）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A5D6A7;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="900" y="160" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b2-2" value="3类核心统计&#xa;（时段汇总/COP/异常）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A5D6A7;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="160" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b2-3" value="2种可视化图表&#xa;（趋势图/分布图）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A5D6A7;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="900" y="230" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b2-4" value="统计报表导出&#xa;（CSV/Excel）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A5D6A7;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="230" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a-c-b2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4CAF50;strokeWidth=2;" edge="1" parent="1" source="center" target="branch2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b2-1" style="rounded=1;strokeColor=#A5D6A7;" edge="1" parent="1" source="branch2" target="b2-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b2-2" style="rounded=1;strokeColor=#A5D6A7;" edge="1" parent="1" source="branch2" target="b2-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b2-3" style="rounded=1;strokeColor=#A5D6A7;" edge="1" parent="1" source="branch2" target="b2-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b2-4" style="rounded=1;strokeColor=#A5D6A7;" edge="1" parent="1" source="branch2" target="b2-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 分支3: 智慧运维需求 -->
+        <mxCell id="branch3" value="智慧运维需求" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF9800;fontStyle=1;fontSize=13;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="620" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b3-1" value="领域知识库构建&#xa;（数据字典/运维手册）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFCC80;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="700" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b3-2" value="智能问答&#xa;（LightRAG + LLM）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFCC80;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="200" y="700" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b3-3" value="能耗异常诊断&#xa;（时间序列分析）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFCC80;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="770" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b3-4" value="故障排查指导&#xa;（运维操作流程）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FFCC80;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="200" y="770" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a-c-b3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#FF9800;strokeWidth=2;" edge="1" parent="1" source="center" target="branch3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b3-1" style="rounded=1;strokeColor=#FFCC80;" edge="1" parent="1" source="branch3" target="b3-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b3-2" style="rounded=1;strokeColor=#FFCC80;" edge="1" parent="1" source="branch3" target="b3-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b3-3" style="rounded=1;strokeColor=#FFCC80;" edge="1" parent="1" source="branch3" target="b3-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b3-4" style="rounded=1;strokeColor=#FFCC80;" edge="1" parent="1" source="branch3" target="b3-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 分支4: 系统集成需求 -->
+        <mxCell id="branch4" value="系统集成需求" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#E91E63;fontStyle=1;fontSize=13;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="620" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b4-1" value="Web 系统搭建&#xa;（前后端分离架构）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F48FB1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="910" y="700" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b4-2" value="MCP 协议接入&#xa;（AI Agent 工具调用）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F48FB1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="700" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b4-3" value="界面简洁/操作直观&#xa;（全流程顺畅交互）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F48FB1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="770" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a-c-b4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E91E63;strokeWidth=2;" edge="1" parent="1" source="center" target="branch4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b4-1" style="rounded=1;strokeColor=#F48FB1;" edge="1" parent="1" source="branch4" target="b4-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b4-2" style="rounded=1;strokeColor=#F48FB1;" edge="1" parent="1" source="branch4" target="b4-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-b4-3" style="rounded=1;strokeColor=#F48FB1;" edge="1" parent="1" source="branch4" target="b4-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

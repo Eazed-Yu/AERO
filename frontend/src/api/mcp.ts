@@ -14,11 +14,14 @@ export interface MCPTool {
 }
 
 export interface MCPStatus {
+  name: string
   enabled: boolean
   available: boolean
   tool_count: number
   tools: MCPTool[]
   endpoint: string | null
+  transport: string
+  mount_error: string | null
 }
 
 export const mcpApi = {
