@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.lightrag_launcher import start_lightrag_server, stop_lightrag_server
 from app.rag.rag_service import LightRAGService
+from app.mcp.server import is_mcp_enabled, mount_mcp
 from app.routers import (
     anomaly,
     buildings,
@@ -13,6 +14,7 @@ from app.routers import (
     energy,
     equipment,
     export,
+    mcp_manage,
     qa,
     statistics,
 )
@@ -91,12 +93,19 @@ def create_app() -> FastAPI:
         export.router, prefix="/api/v1/export", tags=["export"]
     )
     app.include_router(qa.router, prefix="/api/v1/knowledge", tags=["knowledge"])
+    app.include_router(
+        mcp_manage.router, prefix="/api/v1/mcp", tags=["mcp"]
+    )
+
+    # Mount MCP server
+    mount_mcp(app)
 
     @app.get("/api/health")
     async def health():
         return {
             "status": "ok",
             "rag_available": rag_service.is_available,
+            "mcp_available": is_mcp_enabled(),
         }
 
     return app

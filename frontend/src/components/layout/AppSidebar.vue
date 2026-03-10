@@ -41,6 +41,7 @@ import {
   HardwareChipOutline,
   CloudUploadOutline,
   ChatbubbleEllipsesOutline,
+  ExtensionPuzzleOutline,
 } from '@vicons/ionicons5'
 import { NIcon } from 'naive-ui'
 
@@ -62,6 +63,7 @@ const menuOptions: MenuOption[] = [
   { label: '设备监控', key: '/equipment', icon: renderIcon(HardwareChipOutline) },
   { label: '数据导入', key: '/import', icon: renderIcon(CloudUploadOutline) },
   { label: '智能问答', key: '/qa', icon: renderIcon(ChatbubbleEllipsesOutline) },
+  { label: 'MCP 服务', key: '/mcp', icon: renderIcon(ExtensionPuzzleOutline) },
 ]
 
 function handleSelect(key: string) {

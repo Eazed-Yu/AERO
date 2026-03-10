@@ -38,6 +38,11 @@ const router = createRouter({
       path: '/qa',
       component: () => import('@/views/QAView.vue'),
       meta: { title: '智能问答' }
+    },
+    {
+      path: '/mcp',
+      component: () => import('@/views/MCPView.vue'),
+      meta: { title: 'MCP 服务' }
     }
   ]
 })

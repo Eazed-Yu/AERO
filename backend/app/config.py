@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     LIGHTRAG_EMBEDDING_MODEL: str = "text-embedding-v3"
     LIGHTRAG_EMBEDDING_DIM: int = 1024
 
+    # MCP
+    ENABLE_MCP: bool = True
+
     # App
     APP_HOST: str = "0.0.0.0"
     APP_PORT: int = 8000
