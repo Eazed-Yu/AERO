@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+frontend/dist/
+
+# Database
+*.db
+*.sqlite3
+
+# Alembic
+alembic/versions/__pycache__/
+
+# LightRAG local storage
+rag_storage/
+
+# Logs
+*.log
+
+# Test
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+frontend/tsconfig.tsbuildinfo
+
+# Generated data
+backend/data/
+
+# Caches
+.cache/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Local runtime storage
+backend/rag_storage/
+backend/inputs/

@@ -1,0 +1,163 @@
+/* 层级堆叠风 - 工具型 UI 全局样式 */
+
+:root {
+  --bg-base: #f5f7fa;
+  --bg-surface: #ffffff;
+  --bg-hover: #eef0f3;
+  --text-primary: #262626;
+  --text-secondary: #525252;
+  --text-tertiary: #a0a0a0;
+  --border-light: #efeff5;
+  --accent: #18a058;
+  --accent-hover: #0c7a43;
+  --danger: #d03050;
+  --success: #18a058;
+  --warning: #f0a020;
+  --info: #2080f0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* 纯白内容区卡片 - 层级堆叠的核心 */
+.surface {
+  background: var(--bg-surface);
+  border-radius: 3px;
+  border: 1px solid var(--border-light);
+}
+
+.surface-bordered {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+}
+
+/* 信息密度优先 - 紧凑间距 */
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+/* 页面内容区 */
+.page-content {
+  padding: 20px 24px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* 工具栏 */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* 网格布局 */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* KPI 指标 - 非卡片堆叠，使用内联紧凑展示 */
+.kpi-row {
+  display: flex;
+  gap: 24px;
+  padding: 14px 20px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.kpi-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.kpi-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.kpi-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-unit {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  margin-left: 2px;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
+}

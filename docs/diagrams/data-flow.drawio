@@ -1,0 +1,278 @@
+<mxfile host="app.diagrams.net" modified="2026-03-09T00:00:00.000Z" agent="AERO" version="24.0.0" type="device">
+  <diagram name="数据流程" id="data-flow">
+    <mxGraphModel dx="1400" dy="1600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ==================== ETL Pipeline ==================== -->
+        <mxCell id="etl-lane" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#4CAF50;dashed=0;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="20" width="1340" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-title" value="ETL Pipeline - 数据导入流程" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="220" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="etl-source" value="公开数据集&#xa;(CSV / JSON / URL)" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=0.15;fillColor=#C8E6C9;strokeColor=#4CAF50;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="75" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-adapter" value="AbstractETLAdapter&#xa;&#xa;extract() → DataFrame&#xa;transform() → list[dict]&#xa;load() → int" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="280" y="70" width="190" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-standard" value="标准格式&#xa;EnergyRecordCreate&#xa;(Pydantic Schema)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="80" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-import" value="ImportService&#xa;&#xa;bulk_import_energy()&#xa;冲突处理 + 错误记录" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="770" y="72" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-upload" value="文件上传&#xa;POST /api/v1/import/upload&#xa;(JSON / CSV)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=9;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="770" y="165" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-pg" value="PostgreSQL&#xa;energy_records" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="70" width="150" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="etl-a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4CAF50;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="etl-source" target="etl-adapter">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F9A825;strokeWidth=2;" edge="1" parent="1" source="etl-adapter" target="etl-standard">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;" edge="1" parent="1" source="etl-standard" target="etl-import">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="etl-import" target="etl-pg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="etl-a5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=1;dashed=1;" edge="1" parent="1" source="etl-upload" target="etl-import">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== Query Pipeline ==================== -->
+        <mxCell id="query-lane" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;dashed=0;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="250" width="1340" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="query-title" value="Query Pipeline - 能耗查询流程" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="260" width="230" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="q-user" value="用户筛选条件&#xa;&#xa;building_id&#xa;start_time / end_time&#xa;metrics&#xa;page / page_size" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="300" width="150" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="q-api" value="GET /api/v1/energy&#xa;&#xa;EnergyQueryParams&#xa;(参数绑定 + 校验)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="290" y="315" width="170" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="q-service" value="EnergyService.query()&#xa;&#xa;动态 WHERE 构建&#xa;ORDER BY + LIMIT/OFFSET" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="315" width="180" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="q-pg" value="PostgreSQL&#xa;energy_records&#xa;&#xa;idx_energy_building_time" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="800" y="300" width="160" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="q-response" value="PaginatedResponse&#xa;{items, total, page, pages}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="800" y="415" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="q-chart" value="ECharts 可视化&#xa;&#xa;EnergyTrendChart&#xa;EnergyDistributionChart" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#4CAF50;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="310" width="170" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="q-a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="q-user" target="q-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="q-a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;" edge="1" parent="1" source="q-api" target="q-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="q-a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="q-service" target="q-pg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="q-a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F9A825;strokeWidth=2;" edge="1" parent="1" source="q-pg" target="q-chart">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="350" />
+              <mxPoint x="1000" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ==================== Analysis Pipeline ==================== -->
+        <mxCell id="analysis-lane" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;dashed=0;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="480" width="1340" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="analysis-title" value="Analysis Pipeline - 统计分析流程" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="50" y="490" width="240" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-records" value="energy_records&#xa;(时间范围内)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="535" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a-service" value="StatisticsService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="530" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="a-agg" value="aggregate_by_period()&#xa;&#xa;按 hour/day/week/month 聚合&#xa;SUM / AVG 计算" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="290" y="590" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="a-cop" value="calculate_cop()&#xa;&#xa;Q = flow × 1.163 × |ΔT|&#xa;COP = Q / (hvac_kwh / hours)&#xa;评级: excellent/good/fair/poor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="530" width="210" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="a-anomaly-stats" value="get_anomaly_statistics()&#xa;&#xa;异常事件统计汇总&#xa;按类型/严重性分组" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="640" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="a-agg-result" value="AggregationResult[]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="830" y="600" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="a-cop-result" value="COPResult[]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="830" y="555" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="a-charts" value="图表展示&#xa;&#xa;COPTrendChart&#xa;EnergyTrendChart&#xa;EnergyDistributionChart" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#4CAF50;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="540" width="170" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a-a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="a-records" target="a-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=1;" edge="1" parent="1" source="a-service" target="a-agg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=2;" edge="1" parent="1" source="a-service" target="a-cop">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F9A825;strokeWidth=2;" edge="1" parent="1" source="a-cop" target="a-cop-result">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-a5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F9A825;strokeWidth=2;" edge="1" parent="1" source="a-agg" target="a-agg-result">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-a6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4CAF50;strokeWidth=2;" edge="1" parent="1" source="a-cop-result" target="a-charts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-a7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4CAF50;strokeWidth=2;" edge="1" parent="1" source="a-agg-result" target="a-charts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== Detection Pipeline ==================== -->
+        <mxCell id="detect-lane" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;dashed=0;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="720" width="1340" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="detect-title" value="Detection Pipeline - 异常检测流程" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="50" y="730" width="250" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d-records" value="energy_records&#xa;(按建筑 + 时间范围)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="775" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="d-service" value="AnomalyService&#xa;detect_anomalies()&#xa;&#xa;1. 查询记录&#xa;2. 构造 DetectionContext&#xa;3. 调用 Detector&#xa;4. 持久化结果" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="300" y="765" width="180" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="d-abstract" value="AbstractDetector&#xa;detect(records, context)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="765" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d-threshold" value="ThresholdDetector&#xa;&#xa;电力尖峰: val &gt; mean × factor&#xa;COP 异常: COP &lt; 2.0&#xa;温度偏差: |ΔT| &gt; 5°C" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="560" y="825" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ml" value="MLDetector&#xa;(预留)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;strokeDashArray=5;" vertex="1" parent="1">
+          <mxGeometry x="800" y="825" width="120" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="d-candidates" value="异常候选列表&#xa;list[dict]&#xa;&#xa;timestamp, anomaly_type,&#xa;severity, metric_name,&#xa;metric_value, description" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="970" y="765" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="d-events" value="anomaly_events 表&#xa;(持久化)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="990" y="885" width="140" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="d-scatter" value="AnomalyScatterChart&#xa;前端散点图展示" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#4CAF50;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="790" width="160" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d-a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="d-records" target="d-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;" edge="1" parent="1" source="d-service" target="d-abstract">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#C62828;strokeWidth=1;" edge="1" parent="1" source="d-abstract" target="d-threshold">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#C62828;strokeWidth=1;dashed=1;" edge="1" parent="1" source="d-abstract" target="d-ml">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="785" />
+              <mxPoint x="780" y="848" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d-a5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F9A825;strokeWidth=2;" edge="1" parent="1" source="d-threshold" target="d-candidates">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="870" />
+              <mxPoint x="940" y="815" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d-a6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="d-candidates" target="d-events">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-a7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4CAF50;strokeWidth=2;" edge="1" parent="1" source="d-candidates" target="d-scatter">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== QA Pipeline ==================== -->
+        <mxCell id="qa-lane" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#4527A0;dashed=0;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="980" width="1340" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-title" value="QA Pipeline - 智能问答流程" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=14;fontColor=#4527A0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="990" width="210" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="qa-user" value="用户提问&#xa;&#xa;question: 字符串&#xa;mode: hybrid/local/&#xa;global/naive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D1C4E9;strokeColor=#4527A0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1035" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-api" value="POST /api/v1/qa/query&#xa;&#xa;QAQueryRequest&#xa;{ question, mode }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="260" y="1045" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-service" value="QAService&#xa;ask(question, mode)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="490" y="1050" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-rag" value="LightRAGService&#xa;query(question, mode)&#xa;&#xa;aquery() 异步检索" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="710" y="1025" width="170" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-embed" value="Embedding&#xa;BAAI/bge-m3&#xa;(1024维)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="710" y="1110" width="120" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-graph" value="知识图谱&#xa;NetworkX Graph&#xa;+ NanoVectorDB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="1020" width="150" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-llm" value="LLM&#xa;Qwen2.5-7B-Instruct&#xa;(via SiliconFlow)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="1115" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-answer" value="回答&#xa;&#xa;QAQueryResponse&#xa;{ answer, mode, sources }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#4CAF50;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="1040" width="170" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="qa-a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4527A0;strokeWidth=2;" edge="1" parent="1" source="qa-user" target="qa-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#7B1FA2;strokeWidth=2;" edge="1" parent="1" source="qa-api" target="qa-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#C62828;strokeWidth=2;" edge="1" parent="1" source="qa-service" target="qa-rag">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="qa-rag" target="qa-graph">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-a5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=1;" edge="1" parent="1" source="qa-rag" target="qa-embed">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-a6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=2;" edge="1" parent="1" source="qa-graph" target="qa-llm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-a7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4CAF50;strokeWidth=2;" edge="1" parent="1" source="qa-llm" target="qa-answer">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1130" y="1143" />
+              <mxPoint x="1130" y="1075" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

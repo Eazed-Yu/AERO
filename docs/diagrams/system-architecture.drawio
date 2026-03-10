@@ -1,0 +1,221 @@
+<mxfile host="app.diagrams.net" modified="2026-03-09T00:00:00.000Z" agent="AERO" version="24.0.0" type="device">
+  <diagram name="系统架构" id="system-architecture">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Layer 1: 用户层 -->
+        <mxCell id="layer1-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;dashed=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="layer1-label" value="用户层" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="50" y="25" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" value="Web 浏览器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="460" y="35" width="280" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 2: 前端层 -->
+        <mxCell id="layer2-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;dashed=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="130" width="1120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="layer2-label" value="前端层" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="50" y="135" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="vue" value="Vue 3&#xa;(组合式 API)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="160" y="155" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="naiveui" value="Naive UI&#xa;(UI 组件库)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="155" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="echarts" value="ECharts&#xa;(可视化图表)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="155" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="pinia" value="Pinia&#xa;(状态管理)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="670" y="155" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="axios" value="Axios&#xa;(HTTP 客户端)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="840" y="155" width="130" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 3: API 层 -->
+        <mxCell id="layer3-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;dashed=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="1120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="layer3-label" value="API 层" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="50" y="265" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="fastapi" value="FastAPI REST API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="160" y="280" width="200" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="routes" value="/api/v1/buildings  |  /api/v1/energy  |  /api/v1/statistics&#xa;/api/v1/anomaly  |  /api/v1/equipment  |  /api/v1/export&#xa;/api/v1/import  |  /api/v1/qa  |  /api/health" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="400" y="270" width="560" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 4: 业务逻辑层 -->
+        <mxCell id="layer4-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;dashed=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="390" width="1120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="layer4-label" value="业务逻辑层" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="50" y="395" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-building" value="BuildingService&#xa;建筑管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="420" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-energy" value="EnergyService&#xa;能耗查询" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="240" y="420" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-statistics" value="StatisticsService&#xa;统计分析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="400" y="420" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-anomaly" value="AnomalyService&#xa;异常检测" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="560" y="420" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-export" value="ExportService&#xa;数据导出" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="720" y="420" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-qa" value="QAService&#xa;智能问答" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="420" width="130" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 5: 组件层 -->
+        <mxCell id="layer5-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;dashed=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="520" width="1120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="layer5-label" value="组件层" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="50" y="525" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="lightrag" value="LightRAGService&#xa;(知识图谱 + RAG)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="120" y="545" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="threshold-det" value="ThresholdDetector&#xa;(阈值异常检测)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="350" y="545" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ml-det" value="MLDetector&#xa;(ML 异常检测 - 预留)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;strokeDashArray=3;" vertex="1" parent="1">
+          <mxGeometry x="570" y="545" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="export-comp" value="ExportService&#xa;(CSV / Excel)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="545" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="etl" value="AbstractETLAdapter&#xa;(ETL 适配器)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;strokeDashArray=3;" vertex="1" parent="1">
+          <mxGeometry x="990" y="545" width="150" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 6: 数据层 -->
+        <mxCell id="layer6-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;dashed=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="650" width="1120" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="layer6-label" value="数据层" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="50" y="655" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="pg" value="PostgreSQL" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="665" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pg-tables" value="buildings | energy_records&#xa;equipment | equipment_status&#xa;anomaly_events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="330" y="672" width="230" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="rag-storage" value="LightRAG Storage&#xa;(JsonKV + NanoVectorDB&#xa;+ NetworkX Graph)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="660" y="660" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="llm-api" value="SiliconFlow API&#xa;(Qwen2.5-7B + bge-m3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="920" y="675" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows: data flow downward -->
+        <mxCell id="arrow-1-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;strokeColor=#333333;" edge="1" parent="1" source="browser" target="echarts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-2-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;" edge="1" parent="1" source="axios" target="fastapi">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="905" y="245" />
+              <mxPoint x="260" y="245" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow-3-4a" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;" edge="1" parent="1" source="fastapi" target="svc-building">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="370" />
+              <mxPoint x="145" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow-3-4b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;" edge="1" parent="1" source="routes" target="svc-energy">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="375" />
+              <mxPoint x="305" y="375" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow-3-4c" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;" edge="1" parent="1" source="routes" target="svc-statistics">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-3-4d" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;" edge="1" parent="1" source="routes" target="svc-anomaly">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-3-4e" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;" edge="1" parent="1" source="routes" target="svc-export">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-3-4f" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;" edge="1" parent="1" source="routes" target="svc-qa">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Service → Component arrows -->
+        <mxCell id="arrow-qa-rag" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#b85450;" edge="1" parent="1" source="svc-qa" target="lightrag">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="945" y="505" />
+              <mxPoint x="210" y="505" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow-anomaly-threshold" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#b85450;" edge="1" parent="1" source="svc-anomaly" target="threshold-det">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-export-comp" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#b85450;" edge="1" parent="1" source="svc-export" target="export-comp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Component → Data arrows -->
+        <mxCell id="arrow-svc-pg1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#6c8ebf;" edge="1" parent="1" source="svc-building" target="pg">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="145" y="640" />
+              <mxPoint x="225" y="640" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow-svc-pg2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#6c8ebf;" edge="1" parent="1" source="svc-energy" target="pg">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="305" y="630" />
+              <mxPoint x="225" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow-svc-pg3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#6c8ebf;" edge="1" parent="1" source="svc-statistics" target="pg-tables">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-rag-storage" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#b85450;" edge="1" parent="1" source="lightrag" target="rag-storage">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="630" />
+              <mxPoint x="760" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow-rag-llm" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#d6b656;" edge="1" parent="1" source="lightrag" target="llm-api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="620" />
+              <mxPoint x="1010" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
