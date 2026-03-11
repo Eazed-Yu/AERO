@@ -34,14 +34,12 @@ import { h, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { NLayoutSider, NMenu, type MenuOption } from 'naive-ui'
 import {
-  GridOutline,
-  BusinessOutline,
-  FlashOutline,
   StatsChartOutline,
-  WarningOutline,
+  MapOutline,
+  BusinessOutline,
   HardwareChipOutline,
-  ThermometerOutline,
   CloudUploadOutline,
+  WarningOutline,
   ChatbubbleEllipsesOutline,
   ExtensionPuzzleOutline,
 } from '@vicons/ionicons5'
@@ -58,14 +56,12 @@ function renderIcon(icon: any) {
 }
 
 const menuOptions: MenuOption[] = [
-  { label: '总览', key: '/dashboard', icon: renderIcon(GridOutline) },
-  { label: '建筑管理', key: '/buildings', icon: renderIcon(BusinessOutline) },
-  { label: '能耗监测', key: '/energy', icon: renderIcon(FlashOutline) },
   { label: '统计分析', key: '/statistics', icon: renderIcon(StatsChartOutline) },
-  { label: '异常检测', key: '/anomaly', icon: renderIcon(WarningOutline) },
+  { label: '区域管理', key: '/regions', icon: renderIcon(MapOutline) },
+  { label: '建筑管理', key: '/buildings', icon: renderIcon(BusinessOutline) },
   { label: '设备管理', key: '/equipment', icon: renderIcon(HardwareChipOutline) },
-  { label: '暖通监测', key: '/hvac', icon: renderIcon(ThermometerOutline) },
-  { label: '数据导入', key: '/import', icon: renderIcon(CloudUploadOutline) },
+  { label: '数据管理', key: '/data', icon: renderIcon(CloudUploadOutline) },
+  { label: '异常检测', key: '/anomaly', icon: renderIcon(WarningOutline) },
   { label: '智能问答', key: '/qa', icon: renderIcon(ChatbubbleEllipsesOutline) },
   { label: 'MCP 服务', key: '/mcp', icon: renderIcon(ExtensionPuzzleOutline) },
 ]

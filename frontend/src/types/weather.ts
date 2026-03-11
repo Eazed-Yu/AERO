@@ -1,6 +1,6 @@
 export interface WeatherRecord {
   id: number
-  building_id: string
+  region_id: string
   timestamp: string
   dry_bulb_temp?: number
   wet_bulb_temp?: number

@@ -16,9 +16,9 @@ class WeatherService:
         stmt = select(WeatherRecord)
         count_stmt = select(func.count(WeatherRecord.id))
 
-        if params.building_id:
-            stmt = stmt.where(WeatherRecord.building_id == params.building_id)
-            count_stmt = count_stmt.where(WeatherRecord.building_id == params.building_id)
+        if params.region_id:
+            stmt = stmt.where(WeatherRecord.region_id == params.region_id)
+            count_stmt = count_stmt.where(WeatherRecord.region_id == params.region_id)
         if params.start_time:
             stmt = stmt.where(WeatherRecord.timestamp >= params.start_time)
             count_stmt = count_stmt.where(WeatherRecord.timestamp >= params.start_time)

@@ -15,6 +15,9 @@ class Building(TimestampMixin, Base):
     building_id: Mapped[str] = mapped_column(
         String(64), unique=True, nullable=False, index=True
     )
+    region_id: Mapped[str] = mapped_column(
+        String(64), nullable=False, index=True
+    )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     building_type: Mapped[str] = mapped_column(String(64), nullable=False)
     area: Mapped[float] = mapped_column(nullable=False)
@@ -31,5 +34,6 @@ class Building(TimestampMixin, Base):
 
     __table_args__ = (
         CheckConstraint("area > 0", name="ck_building_area_positive"),
+        Index("idx_building_region", "region_id"),
         Index("idx_building_type", "building_type"),
     )

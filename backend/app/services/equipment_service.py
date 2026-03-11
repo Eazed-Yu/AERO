@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, func, cast, Integer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.equipment import Equipment
@@ -9,13 +9,22 @@ class EquipmentService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def _next_id(self) -> str:
+        stmt = select(func.max(cast(Equipment.device_id, Integer)))
+        result = await self.db.execute(stmt)
+        max_id = result.scalar() or 0
+        return str(max_id + 1)
+
     async def list_equipment(
         self,
+        region_id: str | None = None,
         building_id: str | None = None,
         device_type: str | None = None,
         system_type: str | None = None,
     ) -> list[Equipment]:
         stmt = select(Equipment)
+        if region_id:
+            stmt = stmt.where(Equipment.region_id == region_id)
         if building_id:
             stmt = stmt.where(Equipment.building_id == building_id)
         if device_type:
@@ -32,7 +41,8 @@ class EquipmentService:
         return result.scalar_one_or_none()
 
     async def create_equipment(self, data: EquipmentCreate) -> Equipment:
-        equipment = Equipment(**data.model_dump())
+        device_id = await self._next_id()
+        equipment = Equipment(device_id=device_id, **data.model_dump())
         self.db.add(equipment)
         await self.db.flush()
         return equipment

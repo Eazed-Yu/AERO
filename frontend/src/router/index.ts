@@ -3,11 +3,16 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: '/dashboard' },
+    { path: '/', redirect: '/statistics' },
     {
-      path: '/dashboard',
-      component: () => import('@/views/DashboardView.vue'),
-      meta: { title: '总览' }
+      path: '/statistics',
+      component: () => import('@/views/StatisticsView.vue'),
+      meta: { title: '统计分析' }
+    },
+    {
+      path: '/regions',
+      component: () => import('@/views/RegionManageView.vue'),
+      meta: { title: '区域管理' }
     },
     {
       path: '/buildings',
@@ -15,34 +20,19 @@ const router = createRouter({
       meta: { title: '建筑管理' }
     },
     {
-      path: '/energy',
-      component: () => import('@/views/EnergyView.vue'),
-      meta: { title: '能耗监测' }
-    },
-    {
-      path: '/statistics',
-      component: () => import('@/views/StatisticsView.vue'),
-      meta: { title: '统计分析' }
-    },
-    {
-      path: '/anomaly',
-      component: () => import('@/views/AnomalyView.vue'),
-      meta: { title: '异常检测' }
-    },
-    {
       path: '/equipment',
       component: () => import('@/views/EquipmentView.vue'),
       meta: { title: '设备管理' }
     },
     {
-      path: '/hvac',
-      component: () => import('@/views/HVACMonitorView.vue'),
-      meta: { title: '暖通监测' }
+      path: '/data',
+      component: () => import('@/views/DataImportView.vue'),
+      meta: { title: '数据管理' }
     },
     {
-      path: '/import',
-      component: () => import('@/views/DataImportView.vue'),
-      meta: { title: '数据导入' }
+      path: '/anomaly',
+      component: () => import('@/views/AnomalyView.vue'),
+      meta: { title: '异常检测' }
     },
     {
       path: '/qa',

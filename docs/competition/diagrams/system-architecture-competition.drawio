@@ -1,287 +1,260 @@
-<mxfile host="app.diagrams.net" modified="2026-03-10T00:00:00.000Z" agent="AERO" version="24.0.0" type="device">
-  <diagram name="竞赛系统总体架构" id="competition-architecture">
-    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-
-        <!-- Title -->
-        <mxCell id="title" value="AERO 建筑能源智能管理系统 — 总体架构图" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=18;fontColor=#1a1a2e;" vertex="1" parent="1">
-          <mxGeometry x="400" y="15" width="500" height="40" as="geometry" />
-        </mxCell>
-
-        <!-- ====== 用户与AI客户端层 ====== -->
-        <mxCell id="user-layer-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#5C6BC0;dashed=0;arcSize=8;opacity=60;" vertex="1" parent="1">
-          <mxGeometry x="40" y="60" width="1520" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="user-layer-label" value="用户与AI客户端层" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#283593;" vertex="1" parent="1">
-          <mxGeometry x="55" y="65" width="140" height="25" as="geometry" />
-        </mxCell>
-
-        <mxCell id="user-browser" value="运维人员&#xa;（Web浏览器）" style="shape=mxgraph.basic.smiley;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;whiteSpace=wrap;" vertex="1" parent="1">
-          <mxGeometry x="200" y="75" width="60" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="user-browser-label" value="运维人员" style="text;html=1;align=center;verticalAlign=top;strokeColor=none;fillColor=none;fontSize=10;fontColor=#1565C0;" vertex="1" parent="1">
-          <mxGeometry x="185" y="130" width="90" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="claude-desktop" value="Claude Desktop&#xa;（MCP Client）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="500" y="80" width="160" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="cherry-studio" value="Cherry Studio&#xa;（MCP Client）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="700" y="80" width="160" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="other-ai" value="其他AI应用&#xa;（HTTP Client）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="900" y="80" width="160" height="50" as="geometry" />
-        </mxCell>
-
-        <mxCell id="nl-label" value="自然语言交互" style="text;html=1;align=center;fontSize=9;fontColor=#2E7D32;fontStyle=2;" vertex="1" parent="1">
-          <mxGeometry x="680" y="62" width="90" height="20" as="geometry" />
-        </mxCell>
-
-        <!-- ====== 前端表现层 ====== -->
-        <mxCell id="frontend-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;dashed=0;arcSize=8;opacity=60;" vertex="1" parent="1">
-          <mxGeometry x="40" y="170" width="660" height="130" as="geometry" />
-        </mxCell>
-        <mxCell id="frontend-label" value="前端表现层（Vue 3 + Naive UI + ECharts）" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#0D47A1;" vertex="1" parent="1">
-          <mxGeometry x="55" y="175" width="350" height="25" as="geometry" />
-        </mxCell>
-
-        <mxCell id="v-dashboard" value="总览仪表盘" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="60" y="210" width="90" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="v-query" value="能耗查询" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="160" y="210" width="90" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="v-stats" value="统计分析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="260" y="210" width="90" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="v-anomaly" value="异常检测" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="360" y="210" width="90" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="v-equip" value="设备管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="460" y="210" width="90" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="v-import" value="数据导入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="560" y="210" width="90" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="v-qa" value="智能问答" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#F57F17;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="255" width="130" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="v-mcp" value="MCP管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="200" y="255" width="130" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="v-building" value="建筑管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="340" y="255" width="100" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="v-charts" value="ECharts可视化组件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="450" y="255" width="130" height="35" as="geometry" />
-        </mxCell>
-
-        <!-- ====== MCP协议接口层 ====== -->
-        <mxCell id="mcp-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;dashed=0;arcSize=8;opacity=60;" vertex="1" parent="1">
-          <mxGeometry x="730" y="170" width="830" height="130" as="geometry" />
-        </mxCell>
-        <mxCell id="mcp-label" value="MCP协议接口层（FastMCP + Streamable HTTP）" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#1B5E20;" vertex="1" parent="1">
-          <mxGeometry x="745" y="175" width="400" height="25" as="geometry" />
-        </mxCell>
-
-        <mxCell id="mcp-health" value="health_check" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="745" y="210" width="100" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="mcp-caps" value="get_capabilities" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="855" y="210" width="110" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="mcp-query" value="query_energy_data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="975" y="210" width="120" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="mcp-cop" value="calculate_cop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1105" y="210" width="100" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="mcp-detect" value="detect_anomalies" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1215" y="210" width="110" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="mcp-export" value="export_energy_report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="1335" y="210" width="130" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="mcp-stats" value="get_building_statistics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="745" y="255" width="140" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="mcp-proto" value="MCP协议&#xa;JSON-RPC 2.0&#xa;Streamable HTTP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=10;fontStyle=2;" vertex="1" parent="1">
-          <mxGeometry x="1200" y="250" width="160" height="45" as="geometry" />
-        </mxCell>
-
-        <!-- ====== 后端服务层 ====== -->
-        <mxCell id="backend-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;dashed=0;arcSize=8;opacity=60;" vertex="1" parent="1">
-          <mxGeometry x="40" y="320" width="1520" height="130" as="geometry" />
-        </mxCell>
-        <mxCell id="backend-label" value="后端服务层（FastAPI + Uvicorn + async/await）" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#BF360C;" vertex="1" parent="1">
-          <mxGeometry x="55" y="325" width="380" height="25" as="geometry" />
-        </mxCell>
-
-        <mxCell id="svc-b" value="BuildingService&#xa;建筑管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="60" y="360" width="130" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="svc-e" value="EnergyService&#xa;能耗查询" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="210" y="360" width="130" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="svc-s" value="StatisticsService&#xa;统计分析 + COP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="360" y="360" width="150" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="svc-a" value="AnomalyService&#xa;异常检测编排" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="530" y="360" width="140" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="svc-eq" value="EquipmentService&#xa;设备管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="690" y="360" width="130" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="svc-im" value="ImportService&#xa;数据导入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="840" y="360" width="120" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="svc-ex" value="ExportService&#xa;报表导出" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="980" y="360" width="120" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="svc-q" value="QAService&#xa;智能问答" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#F57F17;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1120" y="360" width="120" height="45" as="geometry" />
-        </mxCell>
-
-        <mxCell id="cop-engine" value="COP计算引擎" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="360" y="415" width="100" height="25" as="geometry" />
-        </mxCell>
-        <mxCell id="pydantic" value="Pydantic V2&#xa;数据验证" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="1260" y="360" width="100" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="alembic" value="Alembic&#xa;数据库迁移" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="1380" y="360" width="100" height="45" as="geometry" />
-        </mxCell>
-
-        <!-- ====== 异常检测引擎层 ====== -->
-        <mxCell id="detection-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;dashed=0;arcSize=8;opacity=60;" vertex="1" parent="1">
-          <mxGeometry x="40" y="470" width="700" height="100" as="geometry" />
-        </mxCell>
-        <mxCell id="detection-label" value="异常检测引擎（双层架构）" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#B71C1C;" vertex="1" parent="1">
-          <mxGeometry x="55" y="475" width="220" height="25" as="geometry" />
-        </mxCell>
-
-        <mxCell id="det-threshold" value="第一层：ThresholdDetector&#xa;阈值检测（能耗突增 / COP异常 / 温度偏差）&#xa;响应时间 &lt; 10ms" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="60" y="505" width="300" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="det-sarad" value="第二层：SAR-AD 深度检测&#xa;结构感知路由 × 多传感器时序异常检测&#xa;多尺度融合 + 异常传播路径分析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF9A9A;strokeColor=#C62828;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="380" y="505" width="340" height="50" as="geometry" />
-        </mxCell>
-
-        <!-- ====== 知识引擎层 ====== -->
-        <mxCell id="rag-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F57F17;dashed=0;arcSize=8;opacity=60;" vertex="1" parent="1">
-          <mxGeometry x="760" y="470" width="800" height="100" as="geometry" />
-        </mxCell>
-        <mxCell id="rag-label" value="LightRAG 知识图谱引擎" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#E65100;" vertex="1" parent="1">
-          <mxGeometry x="775" y="475" width="200" height="25" as="geometry" />
-        </mxCell>
-
-        <mxCell id="rag-ingest" value="文档解析&#xa;与实体抽取" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="780" y="505" width="110" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="rag-graph" value="知识图谱&#xa;构建与更新" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="910" y="505" width="110" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="rag-retrieval" value="双层检索&#xa;Low+High Level" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1040" y="505" width="120" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="rag-modes" value="4种检索模式&#xa;local/global&#xa;hybrid/naive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1180" y="505" width="110" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="rag-stream" value="流式问答&#xa;输出" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1310" y="505" width="90" height="50" as="geometry" />
-        </mxCell>
-
-        <!-- ====== 数据存储层 ====== -->
-        <mxCell id="data-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E0E0;strokeColor=#616161;dashed=0;arcSize=8;opacity=60;" vertex="1" parent="1">
-          <mxGeometry x="40" y="590" width="1520" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="data-label" value="数据存储层" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#424242;" vertex="1" parent="1">
-          <mxGeometry x="55" y="595" width="100" height="25" as="geometry" />
-        </mxCell>
-
-        <mxCell id="pg-db" value="PostgreSQL&#xa;能耗时序数据" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1565C0;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="80" y="625" width="150" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="pg-detail" value="buildings&#xa;energy_records&#xa;equipment&#xa;anomaly_events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=9;align=left;" vertex="1" parent="1">
-          <mxGeometry x="260" y="630" width="130" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="nano-vec" value="NanoVectorDB&#xa;向量索引" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="500" y="625" width="140" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="networkx" value="NetworkX&#xa;知识图谱存储" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="680" y="625" width="140" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="json-kv" value="JsonKV&#xa;文档状态存储" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="860" y="625" width="140" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- LLM外部服务 -->
-        <mxCell id="llm-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#6A1B9A;dashed=0;arcSize=8;opacity=60;" vertex="1" parent="1">
-          <mxGeometry x="1100" y="615" width="460" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="llm-label" value="外部AI服务" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=12;fontColor=#4A148C;" vertex="1" parent="1">
-          <mxGeometry x="1115" y="620" width="100" height="25" as="geometry" />
-        </mxCell>
-        <mxCell id="llm-deepseek" value="DeepSeek-V3&#xa;（推理LLM）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#6A1B9A;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1120" y="650" width="120" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="llm-bge" value="BGE-M3&#xa;（向量嵌入）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#6A1B9A;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1260" y="650" width="120" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="llm-ollama" value="Ollama（本地）&#xa;Qwen2.5 + BGE-M3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#6A1B9A;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1400" y="650" width="140" height="45" as="geometry" />
-        </mxCell>
-
-        <!-- ====== 关键连线 ====== -->
-        <!-- 用户 → 前端 -->
-        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1565C0;strokeWidth=2;" edge="1" parent="1" source="user-browser" target="v-dashboard">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- AI客户端 → MCP -->
-        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2E7D32;strokeWidth=2;" edge="1" parent="1" source="claude-desktop" target="mcp-query">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e2b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2E7D32;strokeWidth=2;" edge="1" parent="1" source="cherry-studio" target="mcp-cop">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- 前端 → 后端 -->
-        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=2;" edge="1" parent="1" source="v-qa" target="svc-q">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="125" y="310" /><mxPoint x="1180" y="310" /></Array></mxGeometry>
-        </mxCell>
-        <mxCell id="e3b" value="REST API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=1;dashed=1;fontSize=9;" edge="1" parent="1" source="v-stats" target="svc-s">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- MCP → 后端服务 -->
-        <mxCell id="e4" value="调用Service" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2E7D32;strokeWidth=1;dashed=1;fontSize=9;" edge="1" parent="1" source="mcp-query" target="svc-e">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1035" y="310" /><mxPoint x="275" y="310" /></Array></mxGeometry>
-        </mxCell>
-        <!-- 后端 → 异常检测 -->
-        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#C62828;strokeWidth=2;" edge="1" parent="1" source="svc-a" target="det-threshold">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- 后端 → RAG -->
-        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F57F17;strokeWidth=2;" edge="1" parent="1" source="svc-q" target="rag-retrieval">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- 后端 → 数据库 -->
-        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1565C0;strokeWidth=1;" edge="1" parent="1" source="svc-e" target="pg-db">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- RAG → 知识存储 -->
-        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F57F17;strokeWidth=1;" edge="1" parent="1" source="rag-graph" target="networkx">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e8b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F57F17;strokeWidth=1;" edge="1" parent="1" source="rag-retrieval" target="nano-vec">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- RAG → LLM -->
-        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6A1B9A;strokeWidth=2;" edge="1" parent="1" source="rag-stream" target="llm-deepseek">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram name="竞赛系统总体架构" id="competition-architecture">
+        <mxGraphModel dx="1680" dy="1185" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="AERO 建筑能源智能管理系统 — 总体架构图" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=18;fontColor=#1a1a2e;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="15" width="500" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="user-layer-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#5C6BC0;dashed=0;arcSize=8;opacity=60;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="60" width="1520" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="user-layer-label" value="用户与AI客户端层" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#283593;" parent="1" vertex="1">
+                    <mxGeometry x="55" y="65" width="140" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="user-browser" value="运维人员&#xa;（Web浏览器）" style="shape=mxgraph.basic.smiley;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="75" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="user-browser-label" value="运维人员" style="text;html=1;align=center;verticalAlign=top;strokeColor=none;fillColor=none;fontSize=10;fontColor=#1565C0;" parent="1" vertex="1">
+                    <mxGeometry x="185" y="130" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="claude-desktop" value="Claude Desktop&#xa;（MCP Client）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="80" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="cherry-studio" target="user-layer-bg">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cherry-studio" value="Cherry Studio&#xa;（MCP Client）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="80" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="other-ai" value="其他AI应用&#xa;（HTTP Client）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="80" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="nl-label" value="自然语言交互" style="text;html=1;align=center;fontSize=9;fontColor=#2E7D32;fontStyle=2;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="62" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="frontend-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;dashed=0;arcSize=8;opacity=60;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="170" width="660" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="frontend-label" value="前端表现层（Vue 3 + Naive UI + ECharts）" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#0D47A1;" parent="1" vertex="1">
+                    <mxGeometry x="55" y="175" width="350" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-dashboard" value="总览仪表盘" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="210" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-query" value="能耗查询" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="210" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-stats" value="统计分析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="210" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-anomaly" value="异常检测" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="210" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-equip" value="设备管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="460" y="210" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-import" value="数据导入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="210" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-qa" value="智能问答" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#F57F17;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="255" width="130" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-mcp" value="MCP管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="255" width="130" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-building" value="建筑管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="255" width="100" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="v-charts" value="ECharts可视化组件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="255" width="130" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;dashed=0;arcSize=8;opacity=60;" parent="1" vertex="1">
+                    <mxGeometry x="730" y="170" width="830" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-label" value="MCP协议接口层（FastMCP + Streamable HTTP）" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="745" y="175" width="400" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-health" value="health_check" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;" parent="1" vertex="1">
+                    <mxGeometry x="745" y="210" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-caps" value="get_capabilities" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;" parent="1" vertex="1">
+                    <mxGeometry x="855" y="210" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-query" value="query_energy_data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="975" y="210" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-cop" value="calculate_cop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1105" y="210" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-detect" value="detect_anomalies" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1215" y="210" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-export" value="export_energy_report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;" parent="1" vertex="1">
+                    <mxGeometry x="1335" y="210" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-stats" value="get_building_statistics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=9;" parent="1" vertex="1">
+                    <mxGeometry x="745" y="255" width="140" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="mcp-proto" value="MCP协议&#xa;JSON-RPC 2.0&#xa;Streamable HTTP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;fontSize=10;fontStyle=2;" parent="1" vertex="1">
+                    <mxGeometry x="1200" y="250" width="160" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="backend-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;dashed=0;arcSize=8;opacity=60;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="320" width="1520" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="backend-label" value="后端服务层（FastAPI + Uvicorn + async/await）" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#BF360C;" parent="1" vertex="1">
+                    <mxGeometry x="55" y="325" width="380" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="svc-b" value="BuildingService&#xa;建筑管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="360" width="130" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="svc-e" value="EnergyService&#xa;能耗查询" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="360" width="130" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="svc-s" value="StatisticsService&#xa;统计分析 + COP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="360" width="150" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="svc-a" value="AnomalyService&#xa;异常检测编排" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="360" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="svc-eq" value="EquipmentService&#xa;设备管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="690" y="360" width="130" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="svc-im" value="ImportService&#xa;数据导入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="840" y="360" width="120" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="svc-ex" value="ExportService&#xa;报表导出" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="360" width="120" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="svc-q" value="QAService&#xa;智能问答" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#F57F17;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1120" y="360" width="120" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="cop-engine" value="COP计算引擎" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;fontSize=9;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="415" width="100" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="pydantic" value="Pydantic V2&#xa;数据验证" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;fontSize=9;" parent="1" vertex="1">
+                    <mxGeometry x="1260" y="360" width="100" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="alembic" value="Alembic&#xa;数据库迁移" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;fontSize=9;" parent="1" vertex="1">
+                    <mxGeometry x="1380" y="360" width="100" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="detection-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;dashed=0;arcSize=8;opacity=60;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="470" width="700" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="detection-label" value="异常检测引擎（双层架构）" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#B71C1C;" parent="1" vertex="1">
+                    <mxGeometry x="55" y="475" width="220" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="det-threshold" value="第一层：ThresholdDetector&#xa;阈值检测（能耗突增 / COP异常 / 温度偏差）&#xa;响应时间 &lt; 10ms" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="505" width="300" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="det-sarad" value="第二层：SAR-AD 深度检测&#xa;结构感知路由 × 多传感器时序异常检测&#xa;多尺度融合 + 异常传播路径分析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF9A9A;strokeColor=#C62828;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="505" width="340" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="rag-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F57F17;dashed=0;arcSize=8;opacity=60;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="470" width="800" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="rag-label" value="LightRAG 知识图谱引擎" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#E65100;" parent="1" vertex="1">
+                    <mxGeometry x="775" y="475" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="rag-ingest" value="文档解析&#xa;与实体抽取" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="505" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="rag-graph" value="知识图谱&#xa;构建与更新" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="910" y="505" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="rag-retrieval" value="双层检索&#xa;Low+High Level" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="505" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="rag-modes" value="4种检索模式&#xa;local/global&#xa;hybrid/naive" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1180" y="505" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="rag-stream" value="流式问答&#xa;输出" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1310" y="505" width="90" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="data-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E0E0;strokeColor=#616161;dashed=0;arcSize=8;opacity=60;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="590" width="1520" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="data-label" value="数据存储层" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=13;fontColor=#424242;" parent="1" vertex="1">
+                    <mxGeometry x="55" y="595" width="100" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-db" value="PostgreSQL&#xa;能耗时序数据" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1565C0;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="625" width="150" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-detail" value="buildings&#xa;energy_records&#xa;equipment&#xa;anomaly_events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=9;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="630" width="130" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="nano-vec" value="NanoVectorDB&#xa;向量索引" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="625" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="networkx" value="NetworkX&#xa;知识图谱存储" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="625" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="json-kv" value="JsonKV&#xa;文档状态存储" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFF59D;strokeColor=#F57F17;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="625" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="llm-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#6A1B9A;dashed=0;arcSize=8;opacity=60;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="615" width="460" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="llm-label" value="外部AI服务" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontStyle=1;fontSize=12;fontColor=#4A148C;" parent="1" vertex="1">
+                    <mxGeometry x="1115" y="620" width="100" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="llm-deepseek" value="DeepSeek-V3&#xa;（推理LLM）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#6A1B9A;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1120" y="650" width="120" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="llm-bge" value="BGE-M3&#xa;（向量嵌入）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#6A1B9A;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1260" y="650" width="120" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="llm-ollama" value="Ollama（本地）&#xa;Qwen2.5 + BGE-M3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#6A1B9A;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1400" y="650" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1565C0;strokeWidth=2;" parent="1" source="user-browser" target="v-dashboard" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2E7D32;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="claude-desktop" target="mcp-query" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2E7D32;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="cherry-studio" target="mcp-cop" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=2;" parent="1" source="v-qa" target="svc-q" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="125" y="310"/>
+                            <mxPoint x="1180" y="310"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e3b" value="REST API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E65100;strokeWidth=1;dashed=1;fontSize=9;" parent="1" source="v-stats" target="svc-s" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" value="调用Service" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2E7D32;strokeWidth=1;dashed=1;fontSize=9;" parent="1" source="mcp-query" target="svc-e" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1035" y="310"/>
+                            <mxPoint x="275" y="310"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#C62828;strokeWidth=2;" parent="1" source="svc-a" target="det-threshold" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F57F17;strokeWidth=2;" parent="1" source="svc-q" target="rag-retrieval" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1565C0;strokeWidth=1;" parent="1" source="svc-e" target="pg-db" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F57F17;strokeWidth=1;" parent="1" source="rag-graph" target="networkx" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e8b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F57F17;strokeWidth=1;" parent="1" source="rag-retrieval" target="nano-vec" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6A1B9A;strokeWidth=2;" parent="1" source="rag-stream" target="llm-deepseek" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>

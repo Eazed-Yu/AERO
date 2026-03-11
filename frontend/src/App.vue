@@ -18,10 +18,10 @@ import {
 } from 'naive-ui'
 import { zhCN, dateZhCN } from 'naive-ui'
 import AppLayout from '@/components/layout/AppLayout.vue'
-import { useBuildingStore } from '@/stores/building'
+import { useRegionStore } from '@/stores/region'
 
-const buildingStore = useBuildingStore()
-onMounted(() => buildingStore.fetchBuildings())
+const regionStore = useRegionStore()
+onMounted(() => regionStore.fetchRegions())
 
 const themeOverrides: GlobalThemeOverrides = {
   common: {

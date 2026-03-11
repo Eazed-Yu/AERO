@@ -1,12 +1,15 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.energy_meter import EnergyMeter
+from app.models.equipment import Equipment
 from app.services.export_service import ExportService
+from app.services.hvac_data_service import MODEL_MAP
 
 router = APIRouter()
 
@@ -143,3 +146,74 @@ async def export_excel(
         summary_rows=summary_rows, summary_columns=summary_columns,
         building_rows=building_rows, building_columns=building_columns,
     )
+
+
+# ═══════════════════════════════════════════════════════════
+# Device data export
+# ═══════════════════════════════════════════════════════════
+
+class DeviceExportRequest(BaseModel):
+    format: str = Field("csv", pattern="^(csv|excel)$")
+    start_time: datetime | None = None
+    end_time: datetime | None = None
+
+
+@router.post("/device/{device_id}")
+async def export_device_records(
+    device_id: str,
+    body: DeviceExportRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Export operation records for a specific device."""
+    # Look up equipment
+    eq_stmt = select(Equipment).where(Equipment.device_id == device_id)
+    eq_result = await db.execute(eq_stmt)
+    equipment = eq_result.scalar_one_or_none()
+    if not equipment:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail=f"Device not found: {device_id}")
+
+    model = MODEL_MAP.get(equipment.device_type)
+    if not model:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail=f"Unsupported device type: {equipment.device_type}")
+
+    # Query records
+    stmt = select(model).where(model.device_id == device_id)
+    if body.start_time:
+        stmt = stmt.where(model.timestamp >= body.start_time)
+    if body.end_time:
+        stmt = stmt.where(model.timestamp <= body.end_time)
+    stmt = stmt.order_by(model.timestamp)
+
+    result = await db.execute(stmt)
+    rows = list(result.scalars().all())
+
+    if not rows:
+        # Return empty file with headers only
+        columns = ["device_id", "timestamp"]
+    else:
+        # Build columns from model attributes (skip SQLAlchemy internals)
+        first = rows[0]
+        columns = [c.key for c in model.__table__.columns if c.key != "id"]
+
+    data = []
+    for r in rows:
+        row_dict = {k: getattr(r, k, None) for k in columns}
+        if row_dict.get("timestamp"):
+            row_dict["timestamp"] = row_dict["timestamp"].isoformat()
+        data.append(row_dict)
+
+    export_svc = ExportService()
+    filename_base = f"{device_id}_{equipment.device_type}"
+    if body.format == "excel":
+        return await export_svc.export_excel(
+            data=data, columns=columns,
+            sheet_name="设备运行数据",
+            filename=f"{filename_base}.xlsx",
+        )
+    else:
+        return await export_svc.export_csv(
+            data=data, columns=columns,
+            filename=f"{filename_base}.csv",
+        )

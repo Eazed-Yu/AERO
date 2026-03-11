@@ -10,7 +10,7 @@ class WeatherRecord(Base):
     __tablename__ = "weather_records"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    building_id: Mapped[str] = mapped_column(
+    region_id: Mapped[str] = mapped_column(
         String(64), nullable=False, index=True
     )
     timestamp: Mapped[datetime] = mapped_column(nullable=False, index=True)
@@ -22,5 +22,5 @@ class WeatherRecord(Base):
     atmospheric_pressure: Mapped[float | None] = mapped_column(nullable=True)
 
     __table_args__ = (
-        Index("idx_weather_building_time", "building_id", "timestamp"),
+        Index("idx_weather_region_time", "region_id", "timestamp"),
     )

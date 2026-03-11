@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class EnergyQueryParams(BaseModel):
+    region_id: str | None = None
     building_id: str | None = None
     start_time: datetime | None = None
     end_time: datetime | None = None

@@ -22,20 +22,23 @@ class AnomalyService:
 
     async def detect_anomalies(
         self,
-        building_id: str,
+        region_id: str,
         start_time: datetime,
         end_time: datetime,
+        building_id: str | None = None,
     ) -> list[AnomalyEvent]:
-        context = DetectionContext(building_id=building_id)
+        context = DetectionContext(building_id=building_id or region_id)
 
         # Gather data from multiple sources
         energy_stmt = (
             select(EnergyMeter)
-            .where(EnergyMeter.building_id == building_id)
+            .where(EnergyMeter.region_id == region_id)
             .where(EnergyMeter.timestamp >= start_time)
             .where(EnergyMeter.timestamp <= end_time)
             .order_by(EnergyMeter.timestamp)
         )
+        if building_id:
+            energy_stmt = energy_stmt.where(EnergyMeter.building_id == building_id)
         energy_result = await self.db.execute(energy_stmt)
         energy_records = list(energy_result.scalars().all())
 
@@ -78,7 +81,8 @@ class AnomalyService:
         events = []
         for c in candidates:
             event = AnomalyEvent(
-                building_id=building_id,
+                region_id=region_id,
+                building_id=c.get("building_id", building_id),
                 device_id=c.get("device_id"),
                 timestamp=c["timestamp"],
                 anomaly_type=c["anomaly_type"],
@@ -100,6 +104,7 @@ class AnomalyService:
 
     async def list_anomalies(
         self,
+        region_id: str | None = None,
         building_id: str | None = None,
         severity: str | None = None,
         resolved: bool | None = None,
@@ -109,6 +114,8 @@ class AnomalyService:
         limit: int = 100,
     ) -> list[AnomalyEvent]:
         stmt = select(AnomalyEvent)
+        if region_id:
+            stmt = stmt.where(AnomalyEvent.region_id == region_id)
         if building_id:
             stmt = stmt.where(AnomalyEvent.building_id == building_id)
         if severity:

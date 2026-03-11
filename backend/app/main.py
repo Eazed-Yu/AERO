@@ -17,6 +17,7 @@ from app.routers import (
     hvac_data,
     mcp_manage,
     qa,
+    regions,
     statistics,
     weather,
 )
@@ -79,6 +80,9 @@ def create_app() -> FastAPI:
     )
 
     # Register routers
+    app.include_router(
+        regions.router, prefix="/api/v1/regions", tags=["regions"]
+    )
     app.include_router(
         buildings.router, prefix="/api/v1/buildings", tags=["buildings"]
     )

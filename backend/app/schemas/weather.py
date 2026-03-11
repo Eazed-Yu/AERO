@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class WeatherRecordBase(BaseModel):
-    building_id: str = Field(..., max_length=64)
+    region_id: str = Field(..., max_length=64)
     timestamp: datetime
     dry_bulb_temp: float | None = None
     wet_bulb_temp: float | None = None
@@ -19,7 +19,7 @@ class WeatherRecordCreate(WeatherRecordBase):
 
 
 class WeatherRecordUpdate(BaseModel):
-    building_id: str | None = Field(None, max_length=64)
+    region_id: str | None = Field(None, max_length=64)
     timestamp: datetime | None = None
     dry_bulb_temp: float | None = None
     wet_bulb_temp: float | None = None

@@ -3,7 +3,8 @@ import type { AggregationResult, AnomalyStatistics, COPResult, EUIResult, PlantE
 
 export const statisticsApi = {
   aggregate: (params: {
-    building_id: string
+    region_id?: string
+    building_id?: string
     start_time: string
     end_time: string
     period?: string
@@ -14,6 +15,7 @@ export const statisticsApi = {
     start_time: string
     end_time: string
     device_id?: string
+    region_id?: string
     building_id?: string
     period?: string
   }) => api.get<COPResult[]>('/statistics/cop', { params }),
@@ -33,6 +35,7 @@ export const statisticsApi = {
   anomalySummary: (params: {
     start_time: string
     end_time: string
+    region_id?: string
     building_id?: string
   }) => api.get<AnomalyStatistics>('/statistics/anomaly-summary', { params }),
 }

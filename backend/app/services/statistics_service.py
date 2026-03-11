@@ -26,9 +26,10 @@ class StatisticsService:
 
     async def aggregate_by_period(
         self,
-        building_id: str,
         start_time: datetime,
         end_time: datetime,
+        region_id: str | None = None,
+        building_id: str | None = None,
         period: str = "day",
         metrics: list[str] | None = None,
     ) -> list[AggregationResult]:
@@ -53,13 +54,17 @@ class StatisticsService:
                     func.sum(col).label("sum_val"),
                     func.count(col).label("cnt"),
                 )
-                .where(EnergyMeter.building_id == building_id)
                 .where(EnergyMeter.timestamp >= start_time)
                 .where(EnergyMeter.timestamp <= end_time)
                 .where(col.isnot(None))
-                .group_by(text("period_start"))
-                .order_by(text("period_start"))
             )
+
+            if region_id:
+                stmt = stmt.where(EnergyMeter.region_id == region_id)
+            if building_id:
+                stmt = stmt.where(EnergyMeter.building_id == building_id)
+
+            stmt = stmt.group_by(text("period_start")).order_by(text("period_start"))
 
             rows = await self.db.execute(stmt)
             for row in rows:
@@ -81,6 +86,7 @@ class StatisticsService:
         start_time: datetime,
         end_time: datetime,
         device_id: str | None = None,
+        region_id: str | None = None,
         building_id: str | None = None,
         period: str = "day",
     ) -> list[COPResult]:
@@ -243,14 +249,17 @@ class StatisticsService:
 
     async def get_anomaly_statistics(
         self,
-        building_id: str | None,
         start_time: datetime,
         end_time: datetime,
+        region_id: str | None = None,
+        building_id: str | None = None,
     ) -> AnomalyStatistics:
         base = select(AnomalyEvent).where(
             AnomalyEvent.timestamp >= start_time,
             AnomalyEvent.timestamp <= end_time,
         )
+        if region_id:
+            base = base.where(AnomalyEvent.region_id == region_id)
         if building_id:
             base = base.where(AnomalyEvent.building_id == building_id)
 

@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class EnergyMeterBase(BaseModel):
+    region_id: str = Field(..., max_length=64)
     building_id: str = Field(..., max_length=64)
     timestamp: datetime
     total_electricity_kwh: float | None = Field(None, ge=0)
@@ -22,6 +23,7 @@ class EnergyMeterCreate(EnergyMeterBase):
 
 
 class EnergyMeterUpdate(BaseModel):
+    region_id: str | None = Field(None, max_length=64)
     building_id: str | None = Field(None, max_length=64)
     timestamp: datetime | None = None
     total_electricity_kwh: float | None = Field(None, ge=0)

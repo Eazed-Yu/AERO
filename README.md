@@ -135,10 +135,22 @@ uv run python -m scripts.generate_data --days 30 --seed 42 --reset
 
 # 仅导出 JSON 文件，不写入数据库
 uv run python -m scripts.generate_data --days 30 --seed 42 --json-only
+
+# 生成“按设备上传”的演示文件（不同设备不同字段/格式，含随机异常）
+uv run python -m scripts.generate_data --days 7 --seed 42 --anomaly-rate 0.08 --json-only --upload-files
+
+# 生成“按设备类型上传”的演示文件（推荐：先在系统里手动创建区域/建筑/设备）
+uv run python -m scripts.generate_data --days 7 --seed 42 --anomaly-rate 0.08 --json-only --upload-files-by-type --upload-output-dir type_upload_files
 ```
 
 生成内容包括：5 栋建筑、完整设备台账、气象数据、能耗数据、HVAC 运行数据、异常事件。
 数据直接写入 PostgreSQL，无需额外导入步骤。
+
+若启用 `--upload-files`，会额外在 `backend/data/upload_files/` 下生成每台设备对应文件，
+可在页面的“设备上传数据”按钮中按设备 ID 手动上传；同时生成 `upload_manifest.json` 便于对照文件和设备。
+
+若启用 `--upload-files-by-type`，会在指定目录（如 `backend/data/type_upload_files/`）生成每种设备类型一个样例文件
+（`sample_chiller.csv`、`sample_ahu.json` 等），你可以在设备上传页选择任意同类型设备上传该文件。
 
 ### 5. 启动服务
 

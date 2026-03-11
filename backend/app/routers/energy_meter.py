@@ -13,6 +13,7 @@ router = APIRouter()
 
 @router.get("")
 async def query_energy_meters(
+    region_id: str | None = None,
     building_id: str | None = None,
     start_time: datetime | None = None,
     end_time: datetime | None = None,
@@ -24,7 +25,8 @@ async def query_energy_meters(
     db: AsyncSession = Depends(get_db),
 ):
     params = EnergyQueryParams(
-        building_id=building_id, start_time=start_time, end_time=end_time,
+        region_id=region_id, building_id=building_id,
+        start_time=start_time, end_time=end_time,
         metrics=metrics.split(",") if metrics else None,
         page=page, page_size=page_size, sort_by=sort_by, sort_order=sort_order,
     )

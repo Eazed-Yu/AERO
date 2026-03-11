@@ -1,6 +1,7 @@
 export interface Building {
   id: string
   building_id: string
+  region_id: string
   name: string
   building_type: string
   area: number

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -10,6 +11,7 @@ router = APIRouter()
 
 @router.get("", response_model=list[EquipmentResponse])
 async def list_equipment(
+    region_id: str | None = None,
     building_id: str | None = None,
     device_type: str | None = None,
     system_type: str | None = None,
@@ -17,14 +19,18 @@ async def list_equipment(
 ):
     svc = EquipmentService(db)
     return await svc.list_equipment(
-        building_id=building_id, device_type=device_type, system_type=system_type,
+        region_id=region_id, building_id=building_id,
+        device_type=device_type, system_type=system_type,
     )
 
 
 @router.post("", response_model=EquipmentResponse, status_code=201)
 async def create_equipment(data: EquipmentCreate, db: AsyncSession = Depends(get_db)):
     svc = EquipmentService(db)
-    return await svc.create_equipment(data)
+    try:
+        return await svc.create_equipment(data)
+    except IntegrityError:
+        raise HTTPException(status_code=409, detail="创建设备失败，请重试")
 
 
 @router.get("/{device_id}", response_model=EquipmentResponse)

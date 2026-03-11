@@ -3,6 +3,7 @@ import type { EnergyMeter, ImportResult } from '@/types/energy_meter'
 import type { PaginatedResponse } from '@/types/api'
 
 export interface EnergyMeterQueryParams {
+  region_id?: string
   building_id?: string
   start_time?: string
   end_time?: string

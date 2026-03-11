@@ -2,6 +2,14 @@
   <div class="page-content">
     <div class="toolbar surface" style="margin-bottom: 16px; border-radius: 3px">
       <n-select
+        v-model:value="selectedRegion"
+        :options="regionOptions"
+        placeholder="选择区域"
+        size="small"
+        style="width: 180px"
+        @update:value="onRegionChange"
+      />
+      <n-select
         v-model:value="severityFilter"
         :options="severityOptions"
         placeholder="全部级别"
@@ -50,8 +58,8 @@
     <n-modal v-model:show="showModal" preset="card" title="手动新增异常" style="width: 760px">
       <n-form ref="formRef" :model="form" :rules="rules" label-placement="left" label-width="120">
         <n-grid :cols="2" :x-gap="12">
-          <n-form-item-gi label="建筑ID" path="building_id">
-            <n-input v-model:value="form.building_id" />
+          <n-form-item-gi label="建筑ID">
+            <n-input v-model:value="form.building_id" placeholder="可选" />
           </n-form-item-gi>
           <n-form-item-gi label="时间(ISO)" path="timestamp">
             <n-input v-model:value="form.timestamp" placeholder="2026-03-10T08:00:00" />
@@ -84,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, onMounted, watch } from 'vue'
+import { ref, computed, h, onMounted } from 'vue'
 import {
   NSelect,
   NButton,
@@ -104,18 +112,30 @@ import {
   type FormRules,
 } from 'naive-ui'
 import AnomalyScatterChart from '@/components/charts/AnomalyScatterChart.vue'
-import { useBuildingStore } from '@/stores/building'
+import { useRegionStore } from '@/stores/region'
 import { anomalyApi } from '@/api/anomaly'
 import type { AnomalyEvent } from '@/types/anomaly'
 
-const buildingStore = useBuildingStore()
+const regionStore = useRegionStore()
 const message = useMessage()
 const dialog = useDialog()
 const tableLoading = ref(false)
 const detecting = ref(false)
 const saving = ref(false)
 const anomalies = ref<AnomalyEvent[]>([])
+const selectedRegion = ref<string>('')
 
+const regionOptions = computed(() =>
+  regionStore.regions.map((r) => ({
+    label: r.name,
+    value: r.region_id,
+  }))
+)
+
+function onRegionChange(val: string) {
+  selectedRegion.value = val
+  if (val) fetchAnomalies()
+}
 const showModal = ref(false)
 const formRef = ref<FormInst | null>(null)
 const form = ref({
@@ -144,7 +164,6 @@ const resolvedOptions = [
 ]
 
 const rules: FormRules = {
-  building_id: [{ required: true, message: '请输入建筑ID', trigger: ['blur', 'input'] }],
   timestamp: [{ required: true, message: '请输入时间(ISO)', trigger: ['blur', 'input'] }],
   anomaly_type: [{ required: true, message: '请输入异常类型', trigger: ['blur', 'input'] }],
   metric_name: [{ required: true, message: '请输入指标名', trigger: ['blur', 'input'] }],
@@ -168,7 +187,7 @@ const columns: DataTableColumn<AnomalyEvent>[] = [
       return row.timestamp?.replace('T', ' ').slice(0, 19) ?? ''
     },
   },
-  { title: '建筑ID', key: 'building_id', width: 120, ellipsis: { tooltip: true } },
+  { title: '建筑ID', key: 'building_id', width: 120, ellipsis: { tooltip: true }, render(row) { return row.building_id || '--' } },
   { title: '类型', key: 'anomaly_type', width: 120 },
   {
     title: '级别',
@@ -251,7 +270,7 @@ const scatterData = computed(() =>
 
 function resetForm() {
   form.value = {
-    building_id: buildingStore.current || '',
+    building_id: '',
     timestamp: new Date().toISOString().slice(0, 19),
     anomaly_type: '',
     severity: 'medium',
@@ -271,7 +290,8 @@ async function submit() {
   saving.value = true
   try {
     await anomalyApi.create({
-      building_id: form.value.building_id,
+      region_id: selectedRegion.value,
+      building_id: form.value.building_id || undefined,
       timestamp: form.value.timestamp,
       anomaly_type: form.value.anomaly_type,
       severity: form.value.severity,
@@ -291,10 +311,12 @@ async function submit() {
 }
 
 async function fetchAnomalies() {
+  const regionId = selectedRegion.value
+  if (!regionId) return
+
   tableLoading.value = true
   try {
-    const params: Record<string, any> = {}
-    if (buildingStore.current) params.building_id = buildingStore.current
+    const params: Record<string, any> = { region_id: regionId }
     if (severityFilter.value) params.severity = severityFilter.value
     if (resolvedFilter.value != null) params.resolved = resolvedFilter.value === 'true'
     params.limit = 500
@@ -309,8 +331,8 @@ async function fetchAnomalies() {
 }
 
 async function runDetection() {
-  const buildingId = buildingStore.current
-  if (!buildingId) return
+  const regionId = selectedRegion.value
+  if (!regionId) return
 
   detecting.value = true
   try {
@@ -319,7 +341,7 @@ async function runDetection() {
     start.setDate(start.getDate() - 7)
 
     await anomalyApi.detect({
-      building_id: buildingId,
+      region_id: regionId,
       start_time: start.toISOString().slice(0, 19),
       end_time: end.toISOString().slice(0, 19),
     })
@@ -358,10 +380,12 @@ function remove(row: AnomalyEvent) {
 }
 
 onMounted(() => {
-  fetchAnomalies()
-})
-
-watch(() => buildingStore.current, () => {
-  fetchAnomalies()
+  if (regionStore.regions.length === 0) {
+    regionStore.fetchRegions()
+  }
+  if (regionStore.current) {
+    selectedRegion.value = regionStore.current
+    fetchAnomalies()
+  }
 })
 </script>

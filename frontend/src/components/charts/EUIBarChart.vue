@@ -6,7 +6,7 @@
 import { computed } from 'vue'
 import VChart from 'vue-echarts'
 import { use } from 'echarts/core'
-import { LineChart } from 'echarts/charts'
+import { BarChart } from 'echarts/charts'
 import {
   GridComponent,
   TooltipComponent,
@@ -14,26 +14,27 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 
-use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer])
+use([BarChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer])
 
-interface DataPoint {
-  timestamp: string
-  electricity_kwh?: number
-  hvac_kwh?: number
+interface EUIDataPoint {
+  building_name: string
+  eui: number
+  hvac_eui?: number
 }
 
 const props = defineProps<{
-  data: DataPoint[]
+  data: EUIDataPoint[]
 }>()
 
 const chartOption = computed(() => {
-  const timestamps = props.data.map((d) => d.timestamp)
-  const electricity = props.data.map((d) => d.electricity_kwh ?? null)
-  const hvac = props.data.map((d) => d.hvac_kwh ?? null)
+  const names = props.data.map((d) => d.building_name)
+  const euiValues = props.data.map((d) => d.eui ?? 0)
+  const hvacEuiValues = props.data.map((d) => d.hvac_eui ?? 0)
 
   return {
     tooltip: {
       trigger: 'axis',
+      axisPointer: { type: 'shadow' },
     },
     legend: {
       bottom: 0,
@@ -43,19 +44,19 @@ const chartOption = computed(() => {
       top: 16,
       right: 16,
       bottom: 40,
-      left: 48,
+      left: 60,
       containLabel: false,
     },
     xAxis: {
       type: 'category',
-      data: timestamps,
+      data: names,
       axisLine: { lineStyle: { color: '#d1d5db' } },
-      axisLabel: { fontSize: 11, color: '#6b7280' },
+      axisLabel: { fontSize: 11, color: '#6b7280', rotate: names.length > 6 ? 30 : 0 },
       axisTick: { show: false },
     },
     yAxis: {
       type: 'value',
-      name: 'kWh',
+      name: 'kWh/m²',
       nameTextStyle: { fontSize: 11, color: '#6b7280' },
       axisLine: { show: false },
       axisLabel: { fontSize: 11, color: '#6b7280' },
@@ -63,20 +64,18 @@ const chartOption = computed(() => {
     },
     series: [
       {
-        name: '总用电',
-        type: 'line',
-        data: electricity,
-        symbol: 'none',
-        lineStyle: { width: 2, color: '#2563eb' },
-        itemStyle: { color: '#2563eb' },
+        name: '总 EUI',
+        type: 'bar',
+        data: euiValues,
+        barMaxWidth: 40,
+        itemStyle: { color: '#2563eb', borderRadius: [3, 3, 0, 0] },
       },
       {
-        name: 'HVAC用电',
-        type: 'line',
-        data: hvac,
-        symbol: 'none',
-        lineStyle: { width: 2, color: '#d97706' },
-        itemStyle: { color: '#d97706' },
+        name: 'HVAC EUI',
+        type: 'bar',
+        data: hvacEuiValues,
+        barMaxWidth: 40,
+        itemStyle: { color: '#d97706', borderRadius: [3, 3, 0, 0] },
       },
     ],
   }

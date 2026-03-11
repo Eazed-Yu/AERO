@@ -8,11 +8,13 @@ from .cooling_tower import CoolingTowerRecord
 from .energy_meter import EnergyMeter
 from .equipment import Equipment
 from .pump import PumpRecord
+from .region import Region
 from .vav import VAVRecord
 from .weather import WeatherRecord
 
 __all__ = [
     "Base",
+    "Region",
     "Building",
     "WeatherRecord",
     "EnergyMeter",

@@ -3,6 +3,7 @@ import type { AnomalyEvent } from '@/types/anomaly'
 
 export const anomalyApi = {
   list: (params?: {
+    region_id?: string
     building_id?: string
     severity?: string
     resolved?: boolean
@@ -11,7 +12,7 @@ export const anomalyApi = {
     limit?: number
   }) => api.get<AnomalyEvent[]>('/anomaly', { params }),
 
-  detect: (data: { building_id: string; start_time: string; end_time: string }) =>
+  detect: (data: { region_id: string; building_id?: string; start_time: string; end_time: string }) =>
     api.post<AnomalyEvent[]>('/anomaly/detect', data),
 
   create: (data: Partial<AnomalyEvent>) =>

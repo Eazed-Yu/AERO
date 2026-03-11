@@ -1,6 +1,7 @@
 export interface Equipment {
   id: string
-  building_id: string
+  region_id: string
+  building_id?: string
   device_id: string
   device_name: string
   device_type: string

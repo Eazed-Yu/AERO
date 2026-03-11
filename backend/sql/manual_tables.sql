@@ -1,4 +1,5 @@
 -- AERO Database Schema (PostgreSQL)
+-- 引入区域实体，层级: Region → Building → Equipment
 
 
 DROP TABLE IF EXISTS cooling_tower_records CASCADE;
@@ -7,98 +8,114 @@ DROP TABLE IF EXISTS vav_records CASCADE;
 DROP TABLE IF EXISTS boiler_records CASCADE;
 DROP TABLE IF EXISTS ahu_records CASCADE;
 DROP TABLE IF EXISTS chiller_records CASCADE;
-DROP TABLE IF EXISTS weather_records CASCADE;
-DROP TABLE IF EXISTS energy_meters CASCADE;
 DROP TABLE IF EXISTS anomaly_events CASCADE;
+DROP TABLE IF EXISTS energy_meters CASCADE;
+DROP TABLE IF EXISTS weather_records CASCADE;
 DROP TABLE IF EXISTS equipment CASCADE;
 DROP TABLE IF EXISTS buildings CASCADE;
+DROP TABLE IF EXISTS regions CASCADE;
 
 -- ============================================================
--- 1. buildings
+-- 1. regions (区域)
+-- ============================================================
+CREATE TABLE regions (
+    id           VARCHAR(36)  PRIMARY KEY DEFAULT gen_random_uuid()::varchar,
+    region_id    VARCHAR(64)  NOT NULL UNIQUE,
+    name         VARCHAR(255) NOT NULL,
+    description  TEXT,
+    address      VARCHAR(512),
+    created_at   TIMESTAMP    NOT NULL DEFAULT NOW(),
+    updated_at   TIMESTAMP    NOT NULL DEFAULT NOW()
+);
+
+-- ============================================================
+-- 2. buildings (建筑，属于区域)
 -- ============================================================
 CREATE TABLE buildings (
-    id               VARCHAR(36)  PRIMARY KEY,
-    building_id      VARCHAR(64)  NOT NULL UNIQUE,
-    name             VARCHAR(255) NOT NULL,
-    building_type    VARCHAR(64)  NOT NULL,
-    area             DOUBLE PRECISION NOT NULL CHECK (area > 0),
-    address          VARCHAR(512),
-    floors           INTEGER,
-    year_built       INTEGER,
-    climate_zone     VARCHAR(32),
-    cooling_area     DOUBLE PRECISION,
-    design_cooling_load DOUBLE PRECISION,
-    design_heating_load DOUBLE PRECISION,
-    created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at       TIMESTAMP NOT NULL DEFAULT NOW()
+    id                   VARCHAR(36)       PRIMARY KEY DEFAULT gen_random_uuid()::varchar,
+    building_id          VARCHAR(64)       NOT NULL UNIQUE,
+    region_id            VARCHAR(64)       NOT NULL,
+    name                 VARCHAR(255)      NOT NULL,
+    building_type        VARCHAR(64)       NOT NULL,
+    area                 DOUBLE PRECISION  NOT NULL CHECK (area > 0),
+    address              VARCHAR(512),
+    floors               INTEGER,
+    year_built           INTEGER,
+    climate_zone         VARCHAR(32),
+    cooling_area         DOUBLE PRECISION,
+    design_cooling_load  DOUBLE PRECISION,
+    design_heating_load  DOUBLE PRECISION,
+    created_at           TIMESTAMP         NOT NULL DEFAULT NOW(),
+    updated_at           TIMESTAMP         NOT NULL DEFAULT NOW()
 );
-
-CREATE INDEX idx_building_type ON buildings (building_type);
-
--- ============================================================
--- 2. weather_records
--- ============================================================
-CREATE TABLE weather_records (
-    id                   SERIAL PRIMARY KEY,
-    building_id          VARCHAR(64)  NOT NULL,
-    timestamp            TIMESTAMP    NOT NULL,
-    dry_bulb_temp        DOUBLE PRECISION,
-    wet_bulb_temp        DOUBLE PRECISION,
-    relative_humidity    DOUBLE PRECISION,
-    wind_speed           DOUBLE PRECISION,
-    solar_radiation      DOUBLE PRECISION,
-    atmospheric_pressure DOUBLE PRECISION
-);
-
-CREATE INDEX idx_weather_building_time ON weather_records (building_id, timestamp);
+CREATE INDEX idx_building_region ON buildings(region_id);
+CREATE INDEX idx_building_type ON buildings(building_type);
 
 -- ============================================================
--- 3. energy_meters
--- ============================================================
-CREATE TABLE energy_meters (
-    id                    SERIAL PRIMARY KEY,
-    building_id           VARCHAR(64) NOT NULL,
-    timestamp             TIMESTAMP   NOT NULL,
-    total_electricity_kwh DOUBLE PRECISION,
-    hvac_electricity_kwh  DOUBLE PRECISION,
-    lighting_kwh          DOUBLE PRECISION,
-    plug_load_kwh         DOUBLE PRECISION,
-    peak_demand_kw        DOUBLE PRECISION,
-    gas_m3                DOUBLE PRECISION,
-    water_m3              DOUBLE PRECISION,
-    cooling_kwh           DOUBLE PRECISION,
-    heating_kwh           DOUBLE PRECISION
-);
-
-CREATE INDEX idx_energy_meter_building_time ON energy_meters (building_id, timestamp);
-
--- ============================================================
--- 4. equipment
+-- 3. equipment (设备，必须属于区域，可选属于建筑)
 -- ============================================================
 CREATE TABLE equipment (
-    id             VARCHAR(36)  PRIMARY KEY,
-    building_id    VARCHAR(64)  NOT NULL,
-    device_id      VARCHAR(128) NOT NULL UNIQUE,
-    device_name    VARCHAR(255) NOT NULL,
-    device_type    VARCHAR(64)  NOT NULL,
-    system_type    VARCHAR(32),
-    model          VARCHAR(128),
-    manufacturer   VARCHAR(128),
-    rated_power_kw DOUBLE PRECISION,
-    rated_capacity DOUBLE PRECISION,
-    rated_cop      DOUBLE PRECISION,
-    location       VARCHAR(255),
-    install_date   DATE,
-    status         VARCHAR(32) DEFAULT 'active',
-    created_at     TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at     TIMESTAMP NOT NULL DEFAULT NOW()
+    id              VARCHAR(36)       PRIMARY KEY DEFAULT gen_random_uuid()::varchar,
+    region_id       VARCHAR(64)       NOT NULL,
+    building_id     VARCHAR(64),
+    device_id       VARCHAR(128)      NOT NULL UNIQUE,
+    device_name     VARCHAR(255)      NOT NULL,
+    device_type     VARCHAR(64)       NOT NULL,
+    system_type     VARCHAR(32),
+    model           VARCHAR(128),
+    manufacturer    VARCHAR(128),
+    rated_power_kw  DOUBLE PRECISION,
+    rated_capacity  DOUBLE PRECISION,
+    rated_cop       DOUBLE PRECISION,
+    location        VARCHAR(255),
+    install_date    DATE,
+    status          VARCHAR(32)       DEFAULT 'active',
+    created_at      TIMESTAMP         NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMP         NOT NULL DEFAULT NOW()
 );
-
-CREATE INDEX idx_equipment_type   ON equipment (device_type);
-CREATE INDEX idx_equipment_system ON equipment (system_type);
+CREATE INDEX idx_equipment_region ON equipment(region_id);
+CREATE INDEX idx_equipment_building ON equipment(building_id);
+CREATE INDEX idx_equipment_type ON equipment(device_type);
 
 -- ============================================================
--- 5. chiller_records
+-- 4. weather_records (气象记录，按区域)
+-- ============================================================
+CREATE TABLE weather_records (
+    id                    SERIAL            PRIMARY KEY,
+    region_id             VARCHAR(64)       NOT NULL,
+    timestamp             TIMESTAMP         NOT NULL,
+    dry_bulb_temp         DOUBLE PRECISION,
+    wet_bulb_temp         DOUBLE PRECISION,
+    relative_humidity     DOUBLE PRECISION,
+    wind_speed            DOUBLE PRECISION,
+    solar_radiation       DOUBLE PRECISION,
+    atmospheric_pressure  DOUBLE PRECISION
+);
+CREATE INDEX idx_weather_region_time ON weather_records(region_id, timestamp);
+
+-- ============================================================
+-- 5. energy_meters (能耗表，建筑级，附 region_id)
+-- ============================================================
+CREATE TABLE energy_meters (
+    id                      SERIAL            PRIMARY KEY,
+    region_id               VARCHAR(64)       NOT NULL,
+    building_id             VARCHAR(64)       NOT NULL,
+    timestamp               TIMESTAMP         NOT NULL,
+    total_electricity_kwh   DOUBLE PRECISION,
+    hvac_electricity_kwh    DOUBLE PRECISION,
+    lighting_kwh            DOUBLE PRECISION,
+    plug_load_kwh           DOUBLE PRECISION,
+    peak_demand_kw          DOUBLE PRECISION,
+    gas_m3                  DOUBLE PRECISION,
+    water_m3                DOUBLE PRECISION,
+    cooling_kwh             DOUBLE PRECISION,
+    heating_kwh             DOUBLE PRECISION
+);
+CREATE INDEX idx_energy_meter_region ON energy_meters(region_id);
+CREATE INDEX idx_energy_meter_building_time ON energy_meters(building_id, timestamp);
+
+-- ============================================================
+-- 6. chiller_records
 -- ============================================================
 CREATE TABLE chiller_records (
     id                  SERIAL PRIMARY KEY,
@@ -119,11 +136,10 @@ CREATE TABLE chiller_records (
     compressor_rla_pct  DOUBLE PRECISION,
     running_status      VARCHAR(16)
 );
-
-CREATE INDEX idx_chiller_device_time ON chiller_records (device_id, timestamp);
+CREATE INDEX idx_chiller_device_time ON chiller_records(device_id, timestamp);
 
 -- ============================================================
--- 6. ahu_records
+-- 7. ahu_records
 -- ============================================================
 CREATE TABLE ahu_records (
     id                   SERIAL PRIMARY KEY,
@@ -150,11 +166,10 @@ CREATE TABLE ahu_records (
     dsp_setpoint         DOUBLE PRECISION,
     running_status       VARCHAR(16)
 );
-
-CREATE INDEX idx_ahu_device_time ON ahu_records (device_id, timestamp);
+CREATE INDEX idx_ahu_device_time ON ahu_records(device_id, timestamp);
 
 -- ============================================================
--- 7. boiler_records
+-- 8. boiler_records
 -- ============================================================
 CREATE TABLE boiler_records (
     id                  SERIAL PRIMARY KEY,
@@ -171,11 +186,10 @@ CREATE TABLE boiler_records (
     flue_gas_temp       DOUBLE PRECISION,
     running_status      VARCHAR(16)
 );
-
-CREATE INDEX idx_boiler_device_time ON boiler_records (device_id, timestamp);
+CREATE INDEX idx_boiler_device_time ON boiler_records(device_id, timestamp);
 
 -- ============================================================
--- 8. vav_records
+-- 9. vav_records
 -- ============================================================
 CREATE TABLE vav_records (
     id                     SERIAL PRIMARY KEY,
@@ -193,11 +207,10 @@ CREATE TABLE vav_records (
     occupancy_status       VARCHAR(16),
     operating_mode         VARCHAR(16)
 );
-
-CREATE INDEX idx_vav_device_time ON vav_records (device_id, timestamp);
+CREATE INDEX idx_vav_device_time ON vav_records(device_id, timestamp);
 
 -- ============================================================
--- 9. pump_records
+-- 10. pump_records
 -- ============================================================
 CREATE TABLE pump_records (
     id                    SERIAL PRIMARY KEY,
@@ -211,11 +224,10 @@ CREATE TABLE pump_records (
     differential_pressure DOUBLE PRECISION,
     running_status        VARCHAR(16)
 );
-
-CREATE INDEX idx_pump_device_time ON pump_records (device_id, timestamp);
+CREATE INDEX idx_pump_device_time ON pump_records(device_id, timestamp);
 
 -- ============================================================
--- 10. cooling_tower_records
+-- 11. cooling_tower_records
 -- ============================================================
 CREATE TABLE cooling_tower_records (
     id              SERIAL PRIMARY KEY,
@@ -230,15 +242,15 @@ CREATE TABLE cooling_tower_records (
     range           DOUBLE PRECISION,
     running_status  VARCHAR(16)
 );
-
-CREATE INDEX idx_ct_device_time ON cooling_tower_records (device_id, timestamp);
+CREATE INDEX idx_ct_device_time ON cooling_tower_records(device_id, timestamp);
 
 -- ============================================================
--- 11. anomaly_events
+-- 12. anomaly_events
 -- ============================================================
 CREATE TABLE anomaly_events (
-    id                 VARCHAR(36)  PRIMARY KEY,
-    building_id        VARCHAR(64)  NOT NULL,
+    id                 VARCHAR(36)  PRIMARY KEY DEFAULT gen_random_uuid()::varchar,
+    region_id          VARCHAR(64)  NOT NULL,
+    building_id        VARCHAR(64),
     device_id          VARCHAR(128),
     timestamp          TIMESTAMP    NOT NULL,
     anomaly_type       VARCHAR(64)  NOT NULL,
@@ -254,6 +266,5 @@ CREATE TABLE anomaly_events (
     recommended_action TEXT,
     created_at         TIMESTAMP    NOT NULL DEFAULT NOW()
 );
-
-CREATE INDEX idx_anomaly_building_time ON anomaly_events (building_id, timestamp);
-CREATE INDEX idx_anomaly_severity      ON anomaly_events (severity, resolved);
+CREATE INDEX idx_anomaly_region_time ON anomaly_events(region_id, timestamp);
+CREATE INDEX idx_anomaly_severity    ON anomaly_events(severity, resolved);

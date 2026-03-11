@@ -2,7 +2,7 @@ import api from './index'
 import type { Equipment } from '@/types/equipment'
 
 export const equipmentApi = {
-  list: (params?: { building_id?: string; device_type?: string; system_type?: string }) =>
+  list: (params?: { region_id?: string; building_id?: string; device_type?: string; system_type?: string }) =>
     api.get<Equipment[]>('/equipment', { params }),
 
   getById: (deviceId: string) =>

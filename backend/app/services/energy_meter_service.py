@@ -20,6 +20,9 @@ class EnergyMeterService:
         stmt = select(EnergyMeter)
         count_stmt = select(func.count(EnergyMeter.id))
 
+        if params.region_id:
+            stmt = stmt.where(EnergyMeter.region_id == params.region_id)
+            count_stmt = count_stmt.where(EnergyMeter.region_id == params.region_id)
         if params.building_id:
             stmt = stmt.where(EnergyMeter.building_id == params.building_id)
             count_stmt = count_stmt.where(EnergyMeter.building_id == params.building_id)

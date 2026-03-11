@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -10,11 +11,12 @@ router = APIRouter()
 
 @router.get("", response_model=list[BuildingResponse])
 async def list_buildings(
+    region_id: str | None = None,
     building_type: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     svc = BuildingService(db)
-    return await svc.list_buildings(building_type=building_type)
+    return await svc.list_buildings(region_id=region_id, building_type=building_type)
 
 
 @router.get("/{building_id}", response_model=BuildingResponse)
@@ -35,7 +37,13 @@ async def create_building(
     db: AsyncSession = Depends(get_db),
 ):
     svc = BuildingService(db)
-    return await svc.create_building(data)
+    try:
+        return await svc.create_building(data)
+    except IntegrityError:
+        raise HTTPException(
+            status_code=409,
+            detail=f"建筑ID '{data.building_id}' 已存在",
+        )
 
 
 @router.put("/{building_id}", response_model=BuildingResponse)

@@ -1,287 +1,444 @@
 <template>
   <div class="page-content">
+    <!-- 筛选工具栏 -->
     <div class="toolbar surface" style="margin-bottom: 16px; border-radius: 3px">
       <n-select
-        v-model:value="period"
-        :options="periodOptions"
-        size="small"
-        style="width: 120px"
-      />
-      <n-select
-        v-model:value="metric"
-        :options="metricOptions"
+        v-model:value="selectedRegion"
+        :options="regionOptions"
+        placeholder="选择区域"
         size="small"
         style="width: 180px"
+        @update:value="onRegionChange"
+      />
+      <n-select
+        v-model:value="filters.building_id"
+        :options="buildingOptions"
+        placeholder="全部建筑"
+        clearable
+        size="small"
+        style="width: 180px"
+      />
+      <n-select
+        v-model:value="filters.device_type"
+        :options="deviceTypeOptions"
+        placeholder="全部设备类型"
+        clearable
+        size="small"
+        style="width: 150px"
+      />
+      <n-select
+        v-model:value="filters.period"
+        :options="periodOptions"
+        size="small"
+        style="width: 110px"
       />
       <n-date-picker
         v-model:value="dateRange"
         type="daterange"
-        size="small"
         clearable
+        size="small"
         style="width: 280px"
+        :shortcuts="dateShortcuts"
       />
       <n-button size="small" type="primary" @click="fetchAll">查询</n-button>
     </div>
 
     <n-spin :show="loading">
-      <div class="grid-2">
-        <div class="surface" style="padding: 16px">
-          <div class="section-title">聚合统计</div>
-          <EnergyTrendChart :data="aggChartData" />
-        </div>
-        <div class="surface" style="padding: 16px">
-          <div class="section-title">COP趋势</div>
-          <COPTrendChart :data="copData" />
+      <!-- KPI 卡片 -->
+      <div class="kpi-row surface">
+        <div class="kpi-item" v-for="kpi in kpis" :key="kpi.label">
+          <span class="kpi-label">{{ kpi.label }}</span>
+          <span class="kpi-value">{{ kpi.value }}<span class="kpi-unit">{{ kpi.unit }}</span></span>
         </div>
       </div>
 
-      <!-- EUI Section -->
-      <div class="surface" style="padding: 16px; margin-top: 16px" v-if="euiData">
-        <div class="section-title">EUI 能耗强度</div>
-        <div class="kpi-row" style="margin-top: 12px">
-          <div class="kpi-item">
-            <span class="kpi-label">建筑名称</span>
-            <span class="kpi-value" style="font-size: 14px">{{ euiData.building_name }}</span>
-          </div>
-          <div class="kpi-item">
-            <span class="kpi-label">总用电量</span>
-            <span class="kpi-value">{{ formatNum(euiData.total_electricity_kwh, 0) }}<span class="kpi-unit">kWh</span></span>
-          </div>
-          <div class="kpi-item">
-            <span class="kpi-label">建筑面积</span>
-            <span class="kpi-value">{{ formatNum(euiData.area, 0) }}<span class="kpi-unit">m²</span></span>
-          </div>
-          <div class="kpi-item">
-            <span class="kpi-label">EUI</span>
-            <span class="kpi-value">{{ formatNum(euiData.eui, 2) }}<span class="kpi-unit">kWh/m²</span></span>
-          </div>
-          <div class="kpi-item" v-if="euiData.hvac_eui != null">
-            <span class="kpi-label">HVAC EUI</span>
-            <span class="kpi-value">{{ formatNum(euiData.hvac_eui, 2) }}<span class="kpi-unit">kWh/m²</span></span>
-          </div>
+      <!-- 图表行 1: 能耗趋势 + COP 趋势 -->
+      <div class="grid-2" style="margin-top: 16px">
+        <div class="surface" style="padding: 16px">
+          <div class="section-title">能耗趋势</div>
+          <EnergyTrendChart :data="trendData" />
+        </div>
+        <div class="surface" style="padding: 16px">
+          <div class="section-title">COP 趋势</div>
+          <n-empty v-if="copTrendData.length === 0" description="暂无 COP 数据" style="padding: 40px 0" />
+          <v-chart v-else :option="copChartOption" autoresize style="height: 320px; width: 100%" />
         </div>
       </div>
 
-      <!-- Plant Efficiency Section -->
-      <div class="surface" style="padding: 16px; margin-top: 16px" v-if="plantData.length > 0">
-        <div class="section-title">冷站效率</div>
-        <n-data-table
-          :columns="plantColumns"
-          :data="plantData"
-          size="small"
-          :bordered="false"
-          style="margin-top: 12px"
-        />
+      <!-- 图表行 2: EUI 对比 + 能耗构成 -->
+      <div class="grid-2" style="margin-top: 16px">
+        <div class="surface" style="padding: 16px">
+          <div class="section-title">建筑 EUI 对比</div>
+          <n-empty v-if="euiData.length === 0" description="暂无 EUI 数据" style="padding: 40px 0" />
+          <EUIBarChart v-else :data="euiData" />
+        </div>
+        <div class="surface" style="padding: 16px">
+          <div class="section-title">能耗构成</div>
+          <n-empty v-if="distData.length === 0" description="暂无构成数据" style="padding: 40px 0" />
+          <EnergyDistributionChart v-else :data="distData" />
+        </div>
       </div>
     </n-spin>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, h, onMounted, watch } from 'vue'
-import { NSelect, NDatePicker, NButton, NSpin, NDataTable, NTag, type DataTableColumn } from 'naive-ui'
+import { ref, computed, onMounted } from 'vue'
+import {
+  NSelect,
+  NDatePicker,
+  NButton,
+  NSpin,
+  NEmpty,
+} from 'naive-ui'
+import VChart from 'vue-echarts'
+import { use } from 'echarts/core'
+import { LineChart } from 'echarts/charts'
+import {
+  GridComponent,
+  TooltipComponent,
+  LegendComponent,
+} from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+
 import EnergyTrendChart from '@/components/charts/EnergyTrendChart.vue'
-import COPTrendChart from '@/components/charts/COPTrendChart.vue'
+import EnergyDistributionChart from '@/components/charts/EnergyDistributionChart.vue'
+import EUIBarChart from '@/components/charts/EUIBarChart.vue'
+import { useRegionStore } from '@/stores/region'
 import { useBuildingStore } from '@/stores/building'
 import { statisticsApi } from '@/api/statistics'
-import type { AggregationResult, COPResult, EUIResult, PlantEfficiencyResult } from '@/types/statistics'
+import { equipmentApi } from '@/api/equipment'
+import { anomalyApi } from '@/api/anomaly'
+import type { COPResult } from '@/types/statistics'
 
+use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer])
+
+const regionStore = useRegionStore()
 const buildingStore = useBuildingStore()
 const loading = ref(false)
+const selectedRegion = ref<string>('')
 
-const period = ref('day')
-const metric = ref('total_electricity_kwh')
+// ----------------------------------------------------------------
+// Filters
+// ----------------------------------------------------------------
+const filters = ref({
+  building_id: null as string | null,
+  device_type: null as string | null,
+  period: 'day' as string,
+})
+
+const dateRange = ref<[number, number] | null>(null)
+
+const dateShortcuts = {
+  '近7天': () => {
+    const end = Date.now()
+    return [end - 7 * 24 * 3600_000, end] as [number, number]
+  },
+  '近30天': () => {
+    const end = Date.now()
+    return [end - 30 * 24 * 3600_000, end] as [number, number]
+  },
+  '近90天': () => {
+    const end = Date.now()
+    return [end - 90 * 24 * 3600_000, end] as [number, number]
+  },
+}
+
+const buildingOptions = computed(() =>
+  buildingStore.buildings.map((b) => ({
+    label: b.name,
+    value: b.building_id,
+  }))
+)
+
+const regionOptions = computed(() =>
+  regionStore.regions.map((r) => ({
+    label: r.name,
+    value: r.region_id,
+  }))
+)
+
+function onRegionChange(val: string) {
+  selectedRegion.value = val
+  filters.value.building_id = null
+  if (val) {
+    buildingStore.fetchBuildings(val)
+    fetchAll()
+  }
+}
+
+const deviceTypeOptions = [
+  { label: 'chiller', value: 'chiller' },
+  { label: 'ahu', value: 'ahu' },
+  { label: 'boiler', value: 'boiler' },
+  { label: 'vav', value: 'vav' },
+  { label: 'chw_pump', value: 'chw_pump' },
+  { label: 'cw_pump', value: 'cw_pump' },
+  { label: 'hw_pump', value: 'hw_pump' },
+  { label: 'cooling_tower', value: 'cooling_tower' },
+]
 
 const periodOptions = [
-  { label: '按小时', value: 'hour' },
   { label: '按天', value: 'day' },
   { label: '按周', value: 'week' },
   { label: '按月', value: 'month' },
 ]
 
-const metricOptions = [
-  { label: '总用电量 (kWh)', value: 'total_electricity_kwh' },
-  { label: 'HVAC用电 (kWh)', value: 'hvac_electricity_kwh' },
-  { label: '照明用电 (kWh)', value: 'lighting_kwh' },
-  { label: '插座用电 (kWh)', value: 'plug_load_kwh' },
-  { label: '用水量 (m\u00B3)', value: 'water_m3' },
-  { label: '燃气 (m\u00B3)', value: 'gas_m3' },
-  { label: '峰值需量 (kW)', value: 'peak_demand_kw' },
-  { label: '供冷量 (kWh)', value: 'cooling_kwh' },
-  { label: '供热量 (kWh)', value: 'heating_kwh' },
-]
-
-const defaultRange = (): [number, number] => {
-  const end = Date.now()
-  const start = end - 30 * 24 * 60 * 60 * 1000
-  return [start, end]
+// ----------------------------------------------------------------
+// KPI
+// ----------------------------------------------------------------
+interface KpiItem {
+  label: string
+  value: string
+  unit: string
 }
 
-const dateRange = ref<[number, number] | null>(defaultRange())
+const kpis = ref<KpiItem[]>([
+  { label: '总用电量', value: '--', unit: 'kWh' },
+  { label: '设备总数', value: '--', unit: '台' },
+  { label: '平均COP', value: '--', unit: '' },
+  { label: '活跃异常数', value: '--', unit: '条' },
+])
 
-const aggChartData = ref<{ timestamp: string; electricity_kwh?: number; hvac_kwh?: number }[]>([])
-const copData = ref<COPResult[]>([])
-const euiData = ref<EUIResult | null>(null)
-const plantData = ref<PlantEfficiencyResult[]>([])
+// ----------------------------------------------------------------
+// Chart data
+// ----------------------------------------------------------------
+const trendData = ref<{ timestamp: string; electricity_kwh?: number; hvac_kwh?: number }[]>([])
+const distData = ref<{ name: string; value: number }[]>([])
+const copTrendData = ref<COPResult[]>([])
+const euiData = ref<{ building_name: string; eui: number; hvac_eui?: number }[]>([])
 
+// ----------------------------------------------------------------
+// Helpers
+// ----------------------------------------------------------------
 function formatNum(val: number | undefined | null, decimals = 1): string {
   if (val == null || isNaN(val)) return '--'
   return val.toFixed(decimals)
 }
 
-function getRange() {
-  const range = dateRange.value || defaultRange()
+function getDateRange() {
+  if (dateRange.value) {
+    return {
+      start_time: new Date(dateRange.value[0]).toISOString().slice(0, 19),
+      end_time: new Date(dateRange.value[1]).toISOString().slice(0, 19),
+    }
+  }
+  const end = new Date()
+  const start = new Date()
+  start.setDate(start.getDate() - 7)
   return {
-    start_time: new Date(range[0]).toISOString().slice(0, 19),
-    end_time: new Date(range[1]).toISOString().slice(0, 19),
+    start_time: start.toISOString().slice(0, 19),
+    end_time: end.toISOString().slice(0, 19),
   }
 }
 
-const plantColumns: DataTableColumn<PlantEfficiencyResult>[] = [
-  {
-    title: '时段',
-    key: 'period_start',
-    width: 160,
-    render(row) {
-      return row.period_start?.slice(0, 16).replace('T', ' ') ?? ''
-    },
-  },
-  {
-    title: '总供冷量(kWh)',
-    key: 'total_cooling_kwh',
-    width: 130,
-    align: 'right',
-    render(row) { return formatNum(row.total_cooling_kwh, 1) },
-  },
-  {
-    title: '主机耗电(kWh)',
-    key: 'chiller_power_kwh',
-    width: 130,
-    align: 'right',
-    render(row) { return formatNum(row.chiller_power_kwh, 1) },
-  },
-  {
-    title: '水泵耗电(kWh)',
-    key: 'pump_power_kwh',
-    width: 130,
-    align: 'right',
-    render(row) { return formatNum(row.pump_power_kwh, 1) },
-  },
-  {
-    title: '冷却塔耗电(kWh)',
-    key: 'tower_power_kwh',
-    width: 140,
-    align: 'right',
-    render(row) { return formatNum(row.tower_power_kwh, 1) },
-  },
-  {
-    title: '总耗电(kWh)',
-    key: 'total_power_kwh',
-    width: 120,
-    align: 'right',
-    render(row) { return formatNum(row.total_power_kwh, 1) },
-  },
-  {
-    title: '系统COP',
-    key: 'system_cop',
-    width: 100,
-    align: 'right',
-    render(row) {
-      if (row.system_cop == null) return '--'
-      const cop = row.system_cop
-      const type = cop >= 4 ? 'success' : cop >= 3 ? 'warning' : 'error'
-      return h(NTag, { size: 'small', bordered: false, type }, { default: () => cop.toFixed(2) })
-    },
-  },
-]
+// ----------------------------------------------------------------
+// COP chart option
+// ----------------------------------------------------------------
+const copChartOption = computed(() => {
+  const data = copTrendData.value
+  const timestamps = data.map((r) => r.period_start.slice(0, 10))
+  const copValues = data.map((r) => r.cop ?? null)
 
+  return {
+    tooltip: { trigger: 'axis' },
+    grid: { top: 16, right: 16, bottom: 24, left: 48, containLabel: false },
+    xAxis: {
+      type: 'category',
+      data: timestamps,
+      axisLine: { lineStyle: { color: '#d1d5db' } },
+      axisLabel: { fontSize: 11, color: '#6b7280' },
+      axisTick: { show: false },
+    },
+    yAxis: {
+      type: 'value',
+      name: 'COP',
+      nameTextStyle: { fontSize: 11, color: '#6b7280' },
+      axisLine: { show: false },
+      axisLabel: { fontSize: 11, color: '#6b7280' },
+      splitLine: { lineStyle: { color: '#f3f4f6' } },
+    },
+    series: [
+      {
+        name: 'COP',
+        type: 'line',
+        data: copValues,
+        symbol: 'none',
+        lineStyle: { width: 2, color: '#18a058' },
+        itemStyle: { color: '#18a058' },
+        areaStyle: { color: 'rgba(24, 160, 88, 0.08)' },
+      },
+    ],
+  }
+})
+
+// ----------------------------------------------------------------
+// Fetch all data
+// ----------------------------------------------------------------
 async function fetchAll() {
-  const buildingId = buildingStore.current
-  if (!buildingId) return
+  const regionId = selectedRegion.value
+  if (!regionId) return
 
   loading.value = true
-  const range = getRange()
+  const range = getDateRange()
 
   try {
-    const [aggRes, copRes, euiRes, plantRes] = await Promise.allSettled([
+    const [aggRes, copRes, equipRes, anomalyRes] = await Promise.allSettled([
       statisticsApi.aggregate({
-        building_id: buildingId,
+        region_id: regionId,
+        building_id: filters.value.building_id || undefined,
         start_time: range.start_time,
         end_time: range.end_time,
-        period: period.value,
-        metrics: metric.value + ',hvac_electricity_kwh',
+        period: filters.value.period,
+        metrics: 'total_electricity_kwh,hvac_electricity_kwh,lighting_kwh,plug_load_kwh',
       }),
       statisticsApi.cop({
-        building_id: buildingId,
+        region_id: regionId,
+        building_id: filters.value.building_id || undefined,
         start_time: range.start_time,
         end_time: range.end_time,
-        period: period.value,
+        period: filters.value.period,
       }),
-      statisticsApi.eui({
-        building_id: buildingId,
-        start_time: range.start_time,
-        end_time: range.end_time,
+      equipmentApi.list({
+        region_id: regionId,
+        ...(filters.value.device_type ? { device_type: filters.value.device_type } : {}),
       }),
-      statisticsApi.plantEfficiency({
-        start_time: range.start_time,
-        end_time: range.end_time,
-        period: period.value,
+      anomalyApi.list({
+        region_id: regionId,
+        resolved: false,
+        limit: 1000,
       }),
     ])
 
-    // Build chart data from aggregation results
+    // --- Aggregation: trend + distribution + total electricity KPI ---
+    let totalElec = 0
+    let totalHvac = 0
+    let totalLighting = 0
+    let totalPlug = 0
+    const elecByPeriod: Record<string, { electricity_kwh: number; hvac_kwh: number }> = {}
+
     if (aggRes.status === 'fulfilled') {
-      const data = aggRes.value.data
-      const byPeriod: Record<string, { electricity_kwh?: number; hvac_kwh?: number }> = {}
-      for (const item of data) {
-        const key = item.period_start
-        if (!byPeriod[key]) byPeriod[key] = {}
-        if (item.metric_name === metric.value) {
-          byPeriod[key].electricity_kwh = item.sum ?? item.avg ?? 0
+      for (const item of aggRes.value.data) {
+        const period = item.period_start.slice(0, 10)
+        if (!elecByPeriod[period]) elecByPeriod[period] = { electricity_kwh: 0, hvac_kwh: 0 }
+        if (item.metric_name === 'total_electricity_kwh') {
+          elecByPeriod[period].electricity_kwh = item.sum ?? 0
+          totalElec += item.sum ?? 0
         }
         if (item.metric_name === 'hvac_electricity_kwh') {
-          byPeriod[key].hvac_kwh = item.sum ?? item.avg ?? 0
+          elecByPeriod[period].hvac_kwh = item.sum ?? 0
+          totalHvac += item.sum ?? 0
         }
+        if (item.metric_name === 'lighting_kwh') totalLighting += item.sum ?? 0
+        if (item.metric_name === 'plug_load_kwh') totalPlug += item.sum ?? 0
       }
-      const sortedKeys = Object.keys(byPeriod).sort()
-      aggChartData.value = sortedKeys.map((k) => ({
-        timestamp: k.slice(0, period.value === 'hour' ? 16 : 10),
-        electricity_kwh: byPeriod[k].electricity_kwh,
-        hvac_kwh: byPeriod[k].hvac_kwh,
-      }))
-    } else {
-      aggChartData.value = []
     }
 
+    const sortedPeriods = Object.keys(elecByPeriod).sort()
+    trendData.value = sortedPeriods.map((p) => ({
+      timestamp: p,
+      electricity_kwh: elecByPeriod[p].electricity_kwh,
+      hvac_kwh: elecByPeriod[p].hvac_kwh,
+    }))
+
+    const otherElec = Math.max(0, totalElec - totalHvac - totalLighting - totalPlug)
+    distData.value = [
+      { name: 'HVAC', value: Math.round(totalHvac) },
+      { name: '照明', value: Math.round(totalLighting) },
+      { name: '插座', value: Math.round(totalPlug) },
+      { name: '其他', value: Math.round(otherElec) },
+    ].filter((d) => d.value > 0)
+
+    // --- COP trend ---
     if (copRes.status === 'fulfilled') {
-      copData.value = copRes.value.data
+      copTrendData.value = copRes.value.data
     } else {
-      copData.value = []
+      copTrendData.value = []
     }
 
-    if (euiRes.status === 'fulfilled') {
-      euiData.value = euiRes.value.data
-    } else {
-      euiData.value = null
+    // --- COP KPI (weighted average) ---
+    let avgCop = '--'
+    if (copRes.status === 'fulfilled' && copRes.value.data.length > 0) {
+      let totalCooling = 0
+      let totalPower = 0
+      for (const c of copRes.value.data) {
+        totalCooling += c.cooling_capacity_kwh ?? 0
+        totalPower += c.power_kwh ?? 0
+      }
+      if (totalPower > 0) {
+        avgCop = formatNum(totalCooling / totalPower)
+      }
     }
 
-    if (plantRes.status === 'fulfilled') {
-      plantData.value = plantRes.value.data
-    } else {
-      plantData.value = []
+    // --- Equipment count KPI ---
+    let equipCount = '--'
+    if (equipRes.status === 'fulfilled') {
+      equipCount = String(equipRes.value.data.length)
     }
+
+    // --- Anomaly count KPI ---
+    let anomalyCount = '--'
+    if (anomalyRes.status === 'fulfilled') {
+      const anomalyData = anomalyRes.value.data
+      anomalyCount = String(Array.isArray(anomalyData) ? anomalyData.length : 0)
+    }
+
+    kpis.value = [
+      { label: '总用电量', value: totalElec > 0 ? formatNum(totalElec, 0) : '--', unit: 'kWh' },
+      { label: '设备总数', value: equipCount, unit: '台' },
+      { label: '平均COP', value: avgCop, unit: '' },
+      { label: '活跃异常数', value: anomalyCount, unit: '条' },
+    ]
+
+    // --- EUI per building ---
+    await fetchEUI(range)
   } finally {
     loading.value = false
   }
 }
 
+async function fetchEUI(range: { start_time: string; end_time: string }) {
+  const buildings = buildingStore.buildings
+  if (buildings.length === 0) {
+    euiData.value = []
+    return
+  }
+
+  const targetBuildings = filters.value.building_id
+    ? buildings.filter((b) => b.building_id === filters.value.building_id)
+    : buildings
+
+  const results = await Promise.allSettled(
+    targetBuildings.map((b) =>
+      statisticsApi.eui({
+        building_id: b.building_id,
+        start_time: range.start_time,
+        end_time: range.end_time,
+      })
+    )
+  )
+
+  euiData.value = results
+    .filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled')
+    .map((r) => ({
+      building_name: r.value.data.building_name || r.value.data.building_id,
+      eui: r.value.data.eui ?? 0,
+      hvac_eui: r.value.data.hvac_eui,
+    }))
+    .filter((d) => d.eui > 0)
+}
+
+// ----------------------------------------------------------------
+// Init
+// ----------------------------------------------------------------
 onMounted(() => {
-  if (buildingStore.current) {
+  if (regionStore.regions.length === 0) {
+    regionStore.fetchRegions()
+  }
+  if (regionStore.current) {
+    selectedRegion.value = regionStore.current
+    buildingStore.fetchBuildings(regionStore.current)
     fetchAll()
   }
-})
-
-watch(() => buildingStore.current, (val) => {
-  if (val) fetchAll()
 })
 </script>

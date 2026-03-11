@@ -18,16 +18,18 @@ router = APIRouter()
 
 @router.get("/aggregate", response_model=list[AggregationResult])
 async def aggregate(
-    building_id: str,
     start_time: datetime,
     end_time: datetime,
+    region_id: str | None = None,
+    building_id: str | None = None,
     period: str = Query("day", pattern="^(hour|day|week|month)$"),
     metrics: str = Query("total_electricity_kwh", description="Comma-separated"),
     db: AsyncSession = Depends(get_db),
 ):
     svc = StatisticsService(db)
     return await svc.aggregate_by_period(
-        building_id=building_id, start_time=start_time, end_time=end_time,
+        start_time=start_time, end_time=end_time,
+        region_id=region_id, building_id=building_id,
         period=period, metrics=metrics.split(","),
     )
 
@@ -37,6 +39,7 @@ async def calculate_cop(
     start_time: datetime,
     end_time: datetime,
     device_id: str | None = None,
+    region_id: str | None = None,
     building_id: str | None = None,
     period: str = Query("day", pattern="^(hour|day|week|month)$"),
     db: AsyncSession = Depends(get_db),
@@ -44,7 +47,8 @@ async def calculate_cop(
     svc = StatisticsService(db)
     return await svc.calculate_cop(
         start_time=start_time, end_time=end_time,
-        device_id=device_id, building_id=building_id, period=period,
+        device_id=device_id, region_id=region_id,
+        building_id=building_id, period=period,
     )
 
 
@@ -77,8 +81,12 @@ async def plant_efficiency(
 async def anomaly_summary(
     start_time: datetime,
     end_time: datetime,
+    region_id: str | None = None,
     building_id: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     svc = StatisticsService(db)
-    return await svc.get_anomaly_statistics(building_id, start_time, end_time)
+    return await svc.get_anomaly_statistics(
+        start_time=start_time, end_time=end_time,
+        region_id=region_id, building_id=building_id,
+    )

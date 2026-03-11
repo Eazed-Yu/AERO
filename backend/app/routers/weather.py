@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.get("")
 async def query_weather(
-    building_id: str | None = None,
+    region_id: str | None = None,
     start_time: datetime | None = None,
     end_time: datetime | None = None,
     page: int = Query(1, ge=1),
@@ -23,7 +23,7 @@ async def query_weather(
     db: AsyncSession = Depends(get_db),
 ):
     params = EnergyQueryParams(
-        building_id=building_id, start_time=start_time, end_time=end_time,
+        region_id=region_id, start_time=start_time, end_time=end_time,
         page=page, page_size=page_size, sort_by=sort_by, sort_order=sort_order,
     )
     svc = WeatherService(db)

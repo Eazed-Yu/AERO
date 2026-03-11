@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, func, cast, Integer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Building
@@ -9,8 +9,20 @@ class BuildingService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def list_buildings(self, building_type: str | None = None) -> list[Building]:
+    async def _next_id(self) -> str:
+        stmt = select(func.max(cast(Building.building_id, Integer)))
+        result = await self.db.execute(stmt)
+        max_id = result.scalar() or 0
+        return str(max_id + 1)
+
+    async def list_buildings(
+        self,
+        region_id: str | None = None,
+        building_type: str | None = None,
+    ) -> list[Building]:
         stmt = select(Building)
+        if region_id:
+            stmt = stmt.where(Building.region_id == region_id)
         if building_type:
             stmt = stmt.where(Building.building_type == building_type)
         stmt = stmt.order_by(Building.building_id)
@@ -23,7 +35,8 @@ class BuildingService:
         return result.scalar_one_or_none()
 
     async def create_building(self, data: BuildingCreate) -> Building:
-        building = Building(**data.model_dump())
+        building_id = await self._next_id()
+        building = Building(building_id=building_id, **data.model_dump())
         self.db.add(building)
         await self.db.flush()
         return building

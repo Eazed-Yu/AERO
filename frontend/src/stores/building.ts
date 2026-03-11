@@ -8,10 +8,10 @@ export const useBuildingStore = defineStore('building', () => {
   const current = ref<string>('')
   const loading = ref(false)
 
-  async function fetchBuildings() {
+  async function fetchBuildings(regionId?: string) {
     loading.value = true
     try {
-      const { data } = await buildingsApi.list()
+      const { data } = await buildingsApi.list(regionId ? { region_id: regionId } : undefined)
       buildings.value = data
       if (!current.value && data.length > 0) {
         current.value = data[0].building_id

@@ -17,6 +17,7 @@ router = APIRouter()
 
 @router.get("", response_model=list[AnomalyEventResponse])
 async def list_anomalies(
+    region_id: str | None = None,
     building_id: str | None = None,
     severity: str | None = None,
     resolved: bool | None = None,
@@ -28,7 +29,8 @@ async def list_anomalies(
 ):
     svc = AnomalyService(db)
     return await svc.list_anomalies(
-        building_id=building_id, severity=severity, resolved=resolved,
+        region_id=region_id, building_id=building_id,
+        severity=severity, resolved=resolved,
         equipment_type=equipment_type, start_time=start_time, end_time=end_time,
         limit=limit,
     )
@@ -38,7 +40,8 @@ async def list_anomalies(
 async def detect_anomalies(data: AnomalyDetectRequest, db: AsyncSession = Depends(get_db)):
     svc = AnomalyService(db)
     return await svc.detect_anomalies(
-        building_id=data.building_id, start_time=data.start_time, end_time=data.end_time,
+        region_id=data.region_id, building_id=data.building_id,
+        start_time=data.start_time, end_time=data.end_time,
     )
 
 

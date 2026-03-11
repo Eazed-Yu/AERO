@@ -4,7 +4,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class AnomalyEventBase(BaseModel):
-    building_id: str = Field(..., max_length=64)
+    region_id: str = Field(..., max_length=64)
+    building_id: str | None = Field(None, max_length=64)
     device_id: str | None = None
     timestamp: datetime
     anomaly_type: str = Field(..., max_length=64)
@@ -24,6 +25,7 @@ class AnomalyEventCreate(AnomalyEventBase):
 
 
 class AnomalyEventUpdate(BaseModel):
+    region_id: str | None = Field(None, max_length=64)
     building_id: str | None = Field(None, max_length=64)
     device_id: str | None = None
     timestamp: datetime | None = None
@@ -49,6 +51,7 @@ class AnomalyEventResponse(AnomalyEventBase):
 
 
 class AnomalyDetectRequest(BaseModel):
-    building_id: str
+    region_id: str
+    building_id: str | None = None
     start_time: datetime
     end_time: datetime

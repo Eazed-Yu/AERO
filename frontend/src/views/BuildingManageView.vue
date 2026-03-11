@@ -1,16 +1,25 @@
 <template>
   <div class="page-content">
     <div class="toolbar surface" style="margin-bottom: 16px; border-radius: 3px">
-      <n-input
+      <n-select
+        v-model:value="selectedRegion"
+        :options="regionOptions"
+        placeholder="选择区域"
+        size="small"
+        style="width: 180px"
+        @update:value="onRegionChange"
+      />
+      <n-select
         v-model:value="typeFilter"
-        placeholder="按建筑类型过滤(如 office)"
+        :options="buildingTypeOptions"
+        placeholder="全部建筑类型"
         clearable
         size="small"
-        style="width: 220px"
+        style="width: 160px"
       />
       <n-button size="small" @click="fetchBuildings">查询</n-button>
       <div style="flex: 1" />
-      <n-button size="small" type="primary" @click="openCreate">新增建筑</n-button>
+      <n-button size="small" type="primary" :disabled="!selectedRegion" @click="openCreate">新增建筑</n-button>
     </div>
 
     <div class="surface" style="padding: 0">
@@ -27,14 +36,11 @@
     <n-modal v-model:show="showModal" preset="card" :title="modalTitle" style="width: 680px">
       <n-form ref="formRef" :model="form" :rules="rules" label-placement="left" label-width="100">
         <n-grid :cols="2" :x-gap="12">
-          <n-form-item-gi label="建筑ID" path="building_id">
-            <n-input v-model:value="form.building_id" :disabled="mode === 'edit'" />
-          </n-form-item-gi>
           <n-form-item-gi label="建筑名称" path="name">
             <n-input v-model:value="form.name" />
           </n-form-item-gi>
           <n-form-item-gi label="建筑类型" path="building_type">
-            <n-input v-model:value="form.building_type" />
+            <n-select v-model:value="form.building_type" :options="buildingTypeOptions" placeholder="选择建筑类型" />
           </n-form-item-gi>
           <n-form-item-gi label="面积(m²)" path="area">
             <n-input-number v-model:value="form.area" :min="1" style="width: 100%" />
@@ -72,6 +78,7 @@ import {
   NInput,
   NInputNumber,
   NModal,
+  NSelect,
   useMessage,
   useDialog,
   type DataTableColumn,
@@ -79,26 +86,27 @@ import {
   type FormRules,
 } from 'naive-ui'
 import { buildingsApi } from '@/api/buildings'
-import { useBuildingStore } from '@/stores/building'
+import { useRegionStore } from '@/stores/region'
 import type { Building } from '@/types/building'
 
 const message = useMessage()
 const dialog = useDialog()
-const buildingStore = useBuildingStore()
+const regionStore = useRegionStore()
 
 const loading = ref(false)
 const saving = ref(false)
 const buildings = ref<Building[]>([])
-const typeFilter = ref('')
+const typeFilter = ref<string | null>(null)
+const selectedRegion = ref<string>('')
 
 const showModal = ref(false)
 const mode = ref<'create' | 'edit'>('create')
+const editingBuildingId = ref('')
 const formRef = ref<FormInst | null>(null)
 
 const form = reactive({
-  building_id: '',
   name: '',
-  building_type: '',
+  building_type: '' as string,
   area: null as number | null,
   address: '',
   floors: null as number | null,
@@ -108,16 +116,43 @@ const form = reactive({
 const modalTitle = computed(() => (mode.value === 'create' ? '新增建筑' : '编辑建筑'))
 
 const rules: FormRules = {
-  building_id: [{ required: true, message: '请输入建筑ID', trigger: ['blur', 'input'] }],
   name: [{ required: true, message: '请输入建筑名称', trigger: ['blur', 'input'] }],
-  building_type: [{ required: true, message: '请输入建筑类型', trigger: ['blur', 'input'] }],
+  building_type: [{ required: true, message: '请选择建筑类型', trigger: ['blur', 'change'] }],
   area: [{ required: true, type: 'number', message: '请输入面积', trigger: ['blur', 'change'] }],
 }
 
+const regionOptions = computed(() =>
+  regionStore.regions.map((r) => ({
+    label: r.name,
+    value: r.region_id,
+  }))
+)
+
+const buildingTypeOptions = [
+  { label: '办公', value: 'office' },
+  { label: '商业', value: 'commercial' },
+  { label: '住宅', value: 'residential' },
+  { label: '教育', value: 'education' },
+  { label: '医疗', value: 'medical' },
+  { label: '工业', value: 'industrial' },
+  { label: '酒店', value: 'hotel' },
+  { label: '文体', value: 'cultural' },
+  { label: '综合体', value: 'mixed_use' },
+  { label: '数据中心', value: 'data_center' },
+]
+
 const columns: DataTableColumn<Building>[] = [
-  { title: '建筑ID', key: 'building_id', width: 120 },
+  { title: 'ID', key: 'building_id', width: 80 },
   { title: '名称', key: 'name', width: 180 },
-  { title: '类型', key: 'building_type', width: 120 },
+  {
+    title: '类型',
+    key: 'building_type',
+    width: 120,
+    render(row) {
+      const opt = buildingTypeOptions.find((o) => o.value === row.building_type)
+      return opt ? opt.label : row.building_type
+    },
+  },
   { title: '面积(m²)', key: 'area', width: 120 },
   { title: '地址', key: 'address', ellipsis: { tooltip: true } },
   {
@@ -147,7 +182,6 @@ const columns: DataTableColumn<Building>[] = [
 ]
 
 function resetForm() {
-  form.building_id = ''
   form.name = ''
   form.building_type = ''
   form.area = null
@@ -158,13 +192,14 @@ function resetForm() {
 
 function openCreate() {
   mode.value = 'create'
+  editingBuildingId.value = ''
   resetForm()
   showModal.value = true
 }
 
 function openEdit(row: Building) {
   mode.value = 'edit'
-  form.building_id = row.building_id
+  editingBuildingId.value = row.building_id
   form.name = row.name
   form.building_type = row.building_type
   form.area = row.area
@@ -174,10 +209,19 @@ function openEdit(row: Building) {
   showModal.value = true
 }
 
+function onRegionChange(val: string) {
+  selectedRegion.value = val
+  if (val) fetchBuildings()
+}
+
 async function fetchBuildings() {
+  if (!selectedRegion.value) return
+
   loading.value = true
   try {
-    const { data } = await buildingsApi.list(typeFilter.value || undefined)
+    const params: { region_id: string; building_type?: string } = { region_id: selectedRegion.value }
+    if (typeFilter.value) params.building_type = typeFilter.value
+    const { data } = await buildingsApi.list(params)
     buildings.value = data
   } finally {
     loading.value = false
@@ -189,7 +233,7 @@ async function submit() {
   saving.value = true
   try {
     const payload = {
-      building_id: form.building_id,
+      region_id: selectedRegion.value,
       name: form.name,
       building_type: form.building_type,
       area: form.area!,
@@ -202,13 +246,12 @@ async function submit() {
       await buildingsApi.create(payload)
       message.success('新增成功')
     } else {
-      await buildingsApi.update(form.building_id, payload)
+      await buildingsApi.update(editingBuildingId.value, payload)
       message.success('更新成功')
     }
 
     showModal.value = false
     await fetchBuildings()
-    await buildingStore.fetchBuildings()
   } catch {
     message.error('保存失败，请检查输入')
   } finally {
@@ -219,7 +262,7 @@ async function submit() {
 function remove(row: Building) {
   dialog.warning({
     title: '确认删除',
-    content: `确定删除建筑 ${row.building_id} 吗？`,
+    content: `确定删除建筑 ${row.name} 吗？`,
     positiveText: '删除',
     negativeText: '取消',
     onPositiveClick: async () => {
@@ -227,7 +270,6 @@ function remove(row: Building) {
         await buildingsApi.remove(row.building_id)
         message.success('删除成功')
         await fetchBuildings()
-        await buildingStore.fetchBuildings()
       } catch {
         message.error('删除失败')
       }
@@ -235,5 +277,13 @@ function remove(row: Building) {
   })
 }
 
-onMounted(fetchBuildings)
+onMounted(() => {
+  if (regionStore.regions.length === 0) {
+    regionStore.fetchRegions()
+  }
+  if (regionStore.current) {
+    selectedRegion.value = regionStore.current
+    fetchBuildings()
+  }
+})
 </script>

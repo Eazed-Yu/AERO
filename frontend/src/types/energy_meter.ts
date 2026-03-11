@@ -1,5 +1,6 @@
 export interface EnergyMeter {
   id: number
+  region_id: string
   building_id: string
   timestamp: string
   total_electricity_kwh?: number

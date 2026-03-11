@@ -12,8 +12,11 @@ class AnomalyEvent(Base):
     id: Mapped[str] = mapped_column(
         String(36), primary_key=True, default=generate_uuid
     )
-    building_id: Mapped[str] = mapped_column(
+    region_id: Mapped[str] = mapped_column(
         String(64), nullable=False, index=True
+    )
+    building_id: Mapped[str | None] = mapped_column(
+        String(64), nullable=True, index=True
     )
     device_id: Mapped[str | None] = mapped_column(
         String(128), nullable=True
@@ -40,6 +43,6 @@ class AnomalyEvent(Base):
     )
 
     __table_args__ = (
-        Index("idx_anomaly_building_time", "building_id", "timestamp"),
+        Index("idx_anomaly_region_time", "region_id", "timestamp"),
         Index("idx_anomaly_severity", "severity", "resolved"),
     )

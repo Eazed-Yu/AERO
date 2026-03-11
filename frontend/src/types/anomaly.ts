@@ -1,6 +1,7 @@
 export interface AnomalyEvent {
   id: string
-  building_id: string
+  region_id: string
+  building_id?: string
   device_id?: string
   timestamp: string
   anomaly_type: string
